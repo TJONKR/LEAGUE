@@ -20,19 +20,19 @@ export default async function HackathonsPage() {
 
   const { data: upcoming } = await supabase
     .from("hackathons")
-    .select(\`
+    .select(`
       *,
       hackathon_participants(user_id, profiles(avatar_url, full_name))
-    \`)
+    `)
     .gte("end_date", now)
     .order("start_date", { ascending: true });
 
   const { data: past } = await supabase
     .from("hackathons")
-    .select(\`
+    .select(`
       *,
       hackathon_participants(user_id, profiles(avatar_url, full_name))
-    \`)
+    `)
     .lt("end_date", now)
     .order("start_date", { ascending: false })
     .limit(6);
@@ -77,7 +77,7 @@ export default async function HackathonsPage() {
                 const isOngoing = new Date() >= startDate && new Date() <= endDate;
 
                 return (
-                  <Link key={hackathon.id} href={\`/hackathons/\${hackathon.slug}\`}>
+                  <Link key={hackathon.id} href={"/hackathons/" + hackathon.slug}>
                     <Card hover className="h-full overflow-hidden">
                       {/* Cover Image Header */}
                       <div className="h-32 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
@@ -149,7 +149,7 @@ export default async function HackathonsPage() {
                   const participants = hackathon.hackathon_participants || [];
 
                   return (
-                    <Link key={hackathon.id} href={\`/hackathons/\${hackathon.slug}\`}>
+                    <Link key={hackathon.id} href={"/hackathons/" + hackathon.slug}>
                       <Card hover className="h-full overflow-hidden opacity-60 hover:opacity-100 transition-opacity">
                         {/* Cover Image Header for Past */}
                         <div className="h-24 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
