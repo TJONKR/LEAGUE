@@ -301,7 +301,7 @@ export default async function ProfilePage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-8">
             {/* Projects */}
             <section>
-              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-[#FAFAFA] mb-8 flex items-center gap-2">
                 <Folder className="w-5 h-5" />
                 Projects ({projectsCount})
               </h2>
@@ -339,7 +339,7 @@ export default async function ProfilePage({ params }: PageProps) {
 
             {/* Hackathons */}
             <section>
-              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-[#FAFAFA] mb-8 flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 Hackathons ({participations?.length || 0})
               </h2>

@@ -135,7 +135,7 @@ export default function NewBountyPage() {
     <AppShell>
       <section className="py-12">
         <Container size="md">
-          <h1 className="text-3xl font-bold text-[#FAFAFA] mb-2">Post a Bounty</h1>
+          <h1 className="text-3xl font-bold text-[#FAFAFA] mb-4">Post a Bounty</h1>
           <p className="text-[#737373] mb-8">
             Describe a problem you want solved and set a reward for the best solution.
           </p>
@@ -329,4 +329,5 @@ export default function NewBountyPage() {
     </AppShell>
   );
 }
+
 

@@ -155,7 +155,7 @@ export default async function HomePage() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-[#FAFAFA]">Upcoming Events</h2>
-                <p className="text-[#737373] mt-1">Join a hackathon and start building</p>
+                <p className="text-[#737373] mt-2">Join a hackathon and start building</p>
               </div>
               <Link href="/hackathons">
                 <Button variant="ghost" size="sm">View all →</Button>

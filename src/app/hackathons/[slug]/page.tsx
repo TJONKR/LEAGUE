@@ -193,31 +193,33 @@ export default async function HackathonPage({ params }: PageProps) {
             </Card>
 
             {/* Organizer */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Organizer</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href={`/profile/${hackathon.organizer.username}`}
-                  className="flex items-center gap-3 group"
-                >
-                  <Avatar
-                    src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
-                    fallback={hackathon.organizer.full_name || hackathon.organizer.username}
-                    size="lg"
-                  />
-                  <div>
-                    <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                      {hackathon.organizer.full_name || hackathon.organizer.username}
-                    </p>
-                    <p className="text-sm text-foreground-muted">
-                      @{hackathon.organizer.username}
-                    </p>
-                  </div>
-                </Link>
-              </CardContent>
-            </Card>
+            {hackathon.organizer && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Organizer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Link
+                    href={`/profile/${hackathon.organizer.username}`}
+                    className="flex items-center gap-3 group"
+                  >
+                    <Avatar
+                      src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
+                      fallback={hackathon.organizer.full_name || hackathon.organizer.username}
+                      size="lg"
+                    />
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                        {hackathon.organizer.full_name || hackathon.organizer.username}
+                      </p>
+                      <p className="text-sm text-foreground-muted">
+                        @{hackathon.organizer.username}
+                      </p>
+                    </div>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Participants */}
             {hackathon.participants && hackathon.participants.length > 0 && (
@@ -229,20 +231,22 @@ export default async function HackathonPage({ params }: PageProps) {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {hackathon.participants.slice(0, 20).map((participant) => (
-                      <Link
-                        key={participant.id}
-                        href={`/profile/${participant.profile.username}`}
-                        title={participant.profile.full_name || participant.profile.username}
-                      >
-                        <Avatar
-                          src={participant.profile.altered_avatar_url || participant.profile.avatar_url || participant.profile.fetched_url}
-                          fallback={participant.profile.full_name || participant.profile.username}
-                          size="md"
-                          className="hover:ring-2 hover:ring-primary transition-all"
-                        />
-                      </Link>
-                    ))}
+                    {hackathon.participants.slice(0, 20).map((participant) => 
+                      participant.profile ? (
+                        <Link
+                          key={participant.id}
+                          href={`/profile/${participant.profile.username}`}
+                          title={participant.profile.full_name || participant.profile.username}
+                        >
+                          <Avatar
+                            src={participant.profile.altered_avatar_url || participant.profile.avatar_url || participant.profile.fetched_url}
+                            fallback={participant.profile.full_name || participant.profile.username}
+                            size="md"
+                            className="hover:ring-2 hover:ring-primary transition-all"
+                          />
+                        </Link>
+                      ) : null
+                    )}
                     {hackathon.participants.length > 20 && (
                       <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-sm text-foreground-muted">
                         +{hackathon.participants.length - 20}

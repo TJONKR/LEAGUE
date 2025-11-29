@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        fetchOrCreateProfile(session.user);
       } else {
         setIsLoading(false);
       }
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchOrCreateProfile(session.user);
       } else {
         setProfile(null);
         setIsLoading(false);
@@ -52,13 +52,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  async function fetchProfile(userId: string) {
-    const { data } = await supabase
+  async function fetchOrCreateProfile(authUser: User) {
+    // Try to fetch existing profile
+    const { data: existingProfile } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", userId)
+      .eq("id", authUser.id)
       .single();
-    setProfile(data);
+
+    if (existingProfile) {
+      setProfile(existingProfile);
+      setIsLoading(false);
+      return;
+    }
+
+    // Profile doesn't exist, create one
+    const userMeta = authUser.user_metadata || {};
+    const email = authUser.email || "";
+    const defaultUsername = userMeta.name || userMeta.full_name || email.split("@")[0] || `user_${authUser.id.slice(0, 8)}`;
+    
+    const { data: newProfile, error } = await supabase
+      .from("profiles")
+      .insert({
+        id: authUser.id,
+        username: defaultUsername,
+        full_name: userMeta.full_name || userMeta.name || null,
+        avatar_url: userMeta.avatar_url || userMeta.picture || null,
+        fetched_url: userMeta.avatar_url || userMeta.picture || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Failed to create profile:", error);
+      // If creation fails (e.g., username conflict), try with a unique username
+      const { data: retryProfile } = await supabase
+        .from("profiles")
+        .insert({
+          id: authUser.id,
+          username: `user_${authUser.id.slice(0, 8)}`,
+          full_name: userMeta.full_name || userMeta.name || null,
+          avatar_url: userMeta.avatar_url || userMeta.picture || null,
+          fetched_url: userMeta.avatar_url || userMeta.picture || null,
+        })
+        .select()
+        .single();
+      
+      setProfile(retryProfile);
+    } else {
+      setProfile(newProfile);
+    }
+    
     setIsLoading(false);
   }
 

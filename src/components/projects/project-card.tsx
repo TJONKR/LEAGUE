@@ -127,3 +127,4 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
     </Link>
   );
 }
+

@@ -85,3 +85,4 @@ function AvatarGroup({ className, avatars = [], max = 4, limit, size = "sm", ...
 }
 
 export { Avatar, AvatarGroup };
+

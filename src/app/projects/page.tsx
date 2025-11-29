@@ -37,7 +37,7 @@ export default async function ProjectsPage() {
           <div className="flex items-center justify-between mb-10">
             <div>
               <h1 className="text-3xl font-bold text-[#FAFAFA]">Projects</h1>
-              <p className="text-[#737373] mt-1">Discover what builders are creating</p>
+              <p className="text-[#737373] mt-2">Discover what builders are creating</p>
             </div>
             <Link href="/projects/new">
               <Button className="rounded-full">Submit Project</Button>

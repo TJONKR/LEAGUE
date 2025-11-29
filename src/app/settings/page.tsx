@@ -11,7 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { AppShell } from "@/components/layout/app-shell";
 import { useAuth } from "@/components/providers/auth-provider";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2, LogOut } from "lucide-react";
 
 export default function SettingsPage() {
   const { user, profile } = useAuth();
@@ -123,6 +123,12 @@ export default function SettingsPage() {
     }
 
     setIsLoading(false);
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
   }
 
   if (!user) return null;
@@ -263,6 +269,26 @@ export default function SettingsPage() {
               </Button>
             </div>
           </form>
+
+          {/* Logout Section */}
+          <div className="mt-12 pt-8 border-t border-[#262626]">
+            <Card className="border-[#E53935]/20 bg-[#E53935]/5">
+              <CardContent className="flex items-center justify-between py-4">
+                <div>
+                  <h3 className="text-sm font-medium text-[#FAFAFA]">Log out of your account</h3>
+                  <p className="text-xs text-[#737373] mt-0.5">You will need to sign in again to access your account.</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="border-[#E53935]/50 text-[#E53935] hover:bg-[#E53935]/10 hover:border-[#E53935]"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Log Out
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </Container>
       </section>
     </AppShell>

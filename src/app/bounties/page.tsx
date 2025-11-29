@@ -92,7 +92,7 @@ export default async function BountiesPage({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
             <div>
               <h1 className="text-3xl font-bold text-[#FAFAFA]">Bounties</h1>
-              <p className="text-[#737373] mt-1">
+              <p className="text-[#737373] mt-2">
                 Solve real problems and earn rewards
               </p>
             </div>

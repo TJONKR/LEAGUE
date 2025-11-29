@@ -18,3 +18,4 @@ export function AppShell({ children, hideFooter }: AppShellProps) {
   );
 }
 
+

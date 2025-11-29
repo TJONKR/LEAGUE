@@ -98,3 +98,4 @@ export function BountyFilters({ currentStatus, currentTag, currentSort }: Bounty
   );
 }
 
+

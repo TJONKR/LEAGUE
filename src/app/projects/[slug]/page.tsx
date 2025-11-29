@@ -110,7 +110,7 @@ export default async function ProjectPage({ params }: PageProps) {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#FAFAFA] mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#FAFAFA] mb-4">
               {project.title}
             </h1>
             {project.hackathon && (

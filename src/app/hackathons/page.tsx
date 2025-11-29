@@ -45,7 +45,7 @@ export default async function HackathonsPage() {
           <div className="flex items-center justify-between mb-10">
             <div>
               <h1 className="text-3xl font-bold text-[#FAFAFA]">Hackathons</h1>
-              <p className="text-[#737373] mt-1">Discover events and start building</p>
+              <p className="text-[#737373] mt-2">Discover events and start building</p>
             </div>
             <Link href="/hackathons/new">
               <Button className="rounded-full">Create Hackathon</Button>

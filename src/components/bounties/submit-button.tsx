@@ -253,3 +253,4 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
   );
 }
 
+

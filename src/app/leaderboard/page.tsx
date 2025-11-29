@@ -34,12 +34,12 @@ export default async function LeaderboardPage() {
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#FF7043]/10 rounded-full blur-3xl" />
         
         <Container>
-          <div className="relative text-center mb-8">
+          <div className="relative text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#E53935]/10 border border-[#E53935]/20 rounded-full text-[#E53935] text-sm font-medium mb-6">
               <Flame className="w-4 h-4" />
               <span>Season 1 Active</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-[#FAFAFA] mb-3">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#FAFAFA] mb-4">
               Global Leaderboard
             </h1>
             <p className="text-lg text-[#737373] max-w-md mx-auto">

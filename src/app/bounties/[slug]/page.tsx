@@ -173,7 +173,7 @@ export default async function BountyDetailPage({ params }: PageProps) {
                 </div>
 
                 <div className="p-6">
-                  <h1 className="text-2xl md:text-3xl font-bold text-[#FAFAFA] mb-4">
+                  <h1 className="text-2xl md:text-3xl font-bold text-[#FAFAFA] mb-6">
                     {bounty.title}
                   </h1>
 
