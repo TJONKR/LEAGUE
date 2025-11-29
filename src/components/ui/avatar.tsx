@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useState } from "react";
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   src?: string | null;
@@ -18,7 +19,10 @@ const sizes = {
 };
 
 function Avatar({ className, src, fallback, size = "md", ...props }: AvatarProps) {
+  const [imageError, setImageError] = useState(false);
   const initials = fallback?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const showFallback = !src || imageError;
 
   return (
     <div
@@ -29,13 +33,14 @@ function Avatar({ className, src, fallback, size = "md", ...props }: AvatarProps
       )}
       {...props}
     >
-      {src ? (
+      {!showFallback ? (
         <Image
           src={src}
           alt={fallback || "Avatar"}
           width={sizes[size].px}
           height={sizes[size].px}
           className="w-full h-full object-cover"
+          onError={() => setImageError(true)}
         />
       ) : (
         <span>{initials || "?"}</span>
