@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarGroup } from "@/components/ui/avatar";
 import { AppShell } from "@/components/layout/app-shell";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function HomePage() {
     supabase
       .from("hackathons")
       .select(`
-        id, title, slug, start_date, end_date, location, is_online,
+        id, title, slug, start_date, end_date, location, is_online, cover_image,
         hackathon_participants(user_id, profiles(avatar_url, full_name))
       `)
       .gte("end_date", new Date().toISOString())
@@ -146,9 +147,22 @@ export default async function HomePage() {
                 }));
 
                 return (
-                  <Link key={hackathon.id} href={`/hackathons/${hackathon.slug}`}>
-                    <Card hover className="h-full">
-                      <div className="h-24 bg-gradient-to-br from-[#E53935]/20 to-[#FF7043]/10 rounded-t-xl" />
+                  <Link key={hackathon.id} href={"/hackathons/" + hackathon.slug}>
+                    <Card hover className="h-full overflow-hidden">
+                      {/* Cover Image */}
+                      <div className="h-28 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
+                        {hackathon.cover_image ? (
+                          <Image
+                            src={hackathon.cover_image}
+                            alt={hackathon.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#E53935]/20 to-[#FF7043]/10" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent" />
+                      </div>
                       <div className="p-5">
                         <h3 className="font-semibold text-[#FAFAFA] mb-2">{hackathon.title}</h3>
                         <div className="flex items-center gap-2 text-sm text-[#737373] mb-3">
@@ -157,7 +171,7 @@ export default async function HomePage() {
                             {new Date(hackathon.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                           </span>
                           <span>•</span>
-                          <span>{hackathon.is_online ? "🌐 Online" : `📍 ${hackathon.location}`}</span>
+                          <span>{hackathon.is_online ? "🌐 Online" : "📍 " + hackathon.location}</span>
                         </div>
                         {participants.length > 0 && (
                           <div className="flex items-center gap-2 pt-3 border-t border-[#262626]">
