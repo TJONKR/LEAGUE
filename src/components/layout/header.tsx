@@ -6,7 +6,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { Trophy, Calendar, Search, Bell, Plus } from "lucide-react";
+import { Trophy, Calendar, Search, Bell, Plus, Crosshair } from "lucide-react";
 
 export function Header() {
   const { user, profile, isLoading } = useAuth();
@@ -14,6 +14,7 @@ export function Header() {
 
   const navItems = [
     { href: "/hackathons", label: "Hackathons", icon: Calendar },
+    { href: "/bounties", label: "Bounties", icon: Crosshair },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   ];
 
@@ -73,7 +74,7 @@ export function Header() {
 
                 <Link href={`/profile/${profile?.username || ""}`} className="ml-1">
                   <Avatar
-                    src={profile?.avatar_url}
+                    src={profile?.altered_avatar_url || profile?.avatar_url || profile?.fetched_url}
                     fallback={profile?.full_name || profile?.username || "U"}
                     size="sm"
                     className="ring-2 ring-transparent hover:ring-[#262626] transition-all"

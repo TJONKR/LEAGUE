@@ -71,7 +71,7 @@ export default async function ProjectsPage() {
                               {members.slice(0, 3).map((member: any) => (
                                 <Avatar
                                   key={member.user_id}
-                                  src={member.profile?.avatar_url}
+                                  src={member.profile?.altered_avatar_url || member.profile?.avatar_url || member.profile?.fetched_url}
                                   fallback={member.profile?.full_name || member.profile?.username}
                                   size="xs"
                                   className="ring-2 ring-[#161616]"

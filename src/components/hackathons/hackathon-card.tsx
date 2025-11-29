@@ -62,7 +62,7 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
             {/* Organizer */}
             <div className="flex items-center gap-2 mb-2">
               <Avatar
-                src={hackathon.organizer.avatar_url}
+                src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
                 fallback={hackathon.organizer.full_name || hackathon.organizer.username}
                 size="xs"
               />
@@ -101,7 +101,7 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
                 <div className="flex items-center gap-2">
                   <AvatarGroup
                     avatars={hackathon.participants.slice(0, 4).map((p) => ({
-                      src: p.profile.avatar_url,
+                      src: p.profile.altered_avatar_url || p.profile.avatar_url || p.profile.fetched_url,
                       fallback: p.profile.full_name || p.profile.username,
                     }))}
                     max={4}

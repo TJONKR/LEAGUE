@@ -203,7 +203,7 @@ export default async function HackathonPage({ params }: PageProps) {
                   className="flex items-center gap-3 group"
                 >
                   <Avatar
-                    src={hackathon.organizer.avatar_url}
+                    src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
                     fallback={hackathon.organizer.full_name || hackathon.organizer.username}
                     size="lg"
                   />
@@ -236,7 +236,7 @@ export default async function HackathonPage({ params }: PageProps) {
                         title={participant.profile.full_name || participant.profile.username}
                       >
                         <Avatar
-                          src={participant.profile.avatar_url}
+                          src={participant.profile.altered_avatar_url || participant.profile.avatar_url || participant.profile.fetched_url}
                           fallback={participant.profile.full_name || participant.profile.username}
                           size="md"
                           className="hover:ring-2 hover:ring-primary transition-all"

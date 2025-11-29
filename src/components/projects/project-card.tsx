@@ -96,7 +96,7 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Avatar
-                src={project.creator.avatar_url}
+                src={project.creator.altered_avatar_url || project.creator.avatar_url || project.creator.fetched_url}
                 fallback={project.creator.full_name || project.creator.username}
                 size="xs"
               />

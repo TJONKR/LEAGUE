@@ -67,7 +67,7 @@ export default async function LeaderboardPage() {
                         <div className="relative mb-3">
                           <div className="absolute -inset-1 bg-gradient-to-b from-[#C0C0C0] to-[#808080] rounded-full opacity-50 group-hover:opacity-100 transition-opacity blur-sm" />
                           <Avatar
-                            src={topThree[1].avatar_url}
+                            src={topThree[1].altered_avatar_url || topThree[1].avatar_url || topThree[1].fetched_url}
                             fallback={topThree[1].full_name || topThree[1].username}
                             size="xl"
                             className="relative ring-3 ring-[#C0C0C0] w-16 h-16 sm:w-20 sm:h-20"
@@ -106,7 +106,7 @@ export default async function LeaderboardPage() {
                         <div className="relative mb-3">
                           <div className="absolute -inset-2 bg-gradient-to-b from-[#FFD700] to-[#FFA500] rounded-full opacity-40 group-hover:opacity-70 transition-opacity blur-md animate-pulse" />
                           <Avatar
-                            src={topThree[0].avatar_url}
+                            src={topThree[0].altered_avatar_url || topThree[0].avatar_url || topThree[0].fetched_url}
                             fallback={topThree[0].full_name || topThree[0].username}
                             size="xl"
                             className="relative ring-4 ring-[#FFD700] w-20 h-20 sm:w-24 sm:h-24"
@@ -140,7 +140,7 @@ export default async function LeaderboardPage() {
                         <div className="relative mb-3">
                           <div className="absolute -inset-1 bg-gradient-to-b from-[#CD7F32] to-[#8B4513] rounded-full opacity-50 group-hover:opacity-100 transition-opacity blur-sm" />
                           <Avatar
-                            src={topThree[2].avatar_url}
+                            src={topThree[2].altered_avatar_url || topThree[2].avatar_url || topThree[2].fetched_url}
                             fallback={topThree[2].full_name || topThree[2].username}
                             size="lg"
                             className="relative ring-3 ring-[#CD7F32] w-14 h-14 sm:w-16 sm:h-16"
@@ -211,7 +211,7 @@ export default async function LeaderboardPage() {
                   </div>
                   <div className="col-span-7 sm:col-span-6 flex items-center gap-3 min-w-0">
                     <Avatar 
-                      src={profile.avatar_url} 
+                      src={profile.altered_avatar_url || profile.avatar_url || profile.fetched_url} 
                       fallback={profile.full_name || profile.username} 
                       size="md"
                       className="ring-2 ring-[#262626] group-hover:ring-[#E53935]/50 transition-all flex-shrink-0" 
@@ -253,7 +253,7 @@ export default async function LeaderboardPage() {
                   </div>
                   <div className="col-span-7 sm:col-span-6 flex items-center gap-3 min-w-0">
                     <Avatar 
-                      src={profile.avatar_url} 
+                      src={profile.altered_avatar_url || profile.avatar_url || profile.fetched_url} 
                       fallback={profile.full_name || profile.username} 
                       size="md"
                       className="ring-2 ring-[#262626] group-hover:ring-[#E53935]/50 transition-all flex-shrink-0" 

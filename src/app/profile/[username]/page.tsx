@@ -129,7 +129,7 @@ export default async function ProfilePage({ params }: PageProps) {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <Avatar
-                    src={profile.avatar_url}
+                    src={profile.altered_avatar_url || profile.avatar_url || profile.fetched_url}
                     fallback={profile.full_name || profile.username}
                     size="xl"
                     className="mb-4 w-24 h-24"

@@ -199,7 +199,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     className="flex items-center gap-3 group"
                   >
                     <Avatar
-                      src={member.profile.avatar_url}
+                      src={member.profile.altered_avatar_url || member.profile.avatar_url || member.profile.fetched_url}
                       fallback={member.profile.full_name || member.profile.username}
                       size="md"
                     />

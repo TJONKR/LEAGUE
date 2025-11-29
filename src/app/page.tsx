@@ -34,17 +34,17 @@ export default async function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left - Text */}
             <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#FAFAFA] leading-[1.1] mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#FAFAFA] leading-tight">
                 Where builders{" "}
                 <span className="bg-gradient-to-r from-[#E53935] to-[#FF7043] bg-clip-text text-transparent">
                   rise to the top.
                 </span>
               </h1>
-              <p className="text-lg text-[#A1A1A1] mb-8 max-w-lg">
+              <p className="mt-6 text-lg sm:text-xl text-[#A1A1A1] leading-relaxed max-w-lg">
                 Join hackathons, ship projects, compete with the best. 
                 Track your progress and climb the leaderboard.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="mt-10 flex flex-wrap gap-4">
                 <Link href="/hackathons">
                   <Button size="lg" className="text-base px-8 rounded-full">
                     Browse Hackathons
@@ -71,7 +71,7 @@ export default async function HomePage() {
                       <div className="relative mb-2">
                         <div className="absolute -inset-1 bg-[#C0C0C0]/30 rounded-full blur-sm group-hover:bg-[#C0C0C0]/50 transition" />
                         <Avatar
-                          src={topThree[1].avatar_url}
+                          src={topThree[1].altered_avatar_url || topThree[1].avatar_url || topThree[1].fetched_url}
                           fallback={topThree[1].full_name || topThree[1].username}
                           size="lg"
                           className="relative ring-2 ring-[#C0C0C0]"
@@ -96,7 +96,7 @@ export default async function HomePage() {
                       <div className="relative mb-2">
                         <div className="absolute -inset-2 bg-[#FFD700]/30 rounded-full blur-md group-hover:bg-[#FFD700]/50 transition animate-pulse" />
                         <Avatar
-                          src={topThree[0].avatar_url}
+                          src={topThree[0].altered_avatar_url || topThree[0].avatar_url || topThree[0].fetched_url}
                           fallback={topThree[0].full_name || topThree[0].username}
                           size="xl"
                           className="relative ring-3 ring-[#FFD700] w-20 h-20"
@@ -124,7 +124,7 @@ export default async function HomePage() {
                       <div className="relative mb-2">
                         <div className="absolute -inset-1 bg-[#CD7F32]/30 rounded-full blur-sm group-hover:bg-[#CD7F32]/50 transition" />
                         <Avatar
-                          src={topThree[2].avatar_url}
+                          src={topThree[2].altered_avatar_url || topThree[2].avatar_url || topThree[2].fetched_url}
                           fallback={topThree[2].full_name || topThree[2].username}
                           size="lg"
                           className="relative ring-2 ring-[#CD7F32]"
