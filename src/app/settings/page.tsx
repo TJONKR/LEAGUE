@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Container } from "@/components/ui/container";
@@ -8,16 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
 import { AppShell } from "@/components/layout/app-shell";
 import { useAuth } from "@/components/providers/auth-provider";
+import { Camera, Loader2 } from "lucide-react";
 
 export default function SettingsPage() {
   const { user, profile } = useAuth();
   const router = useRouter();
   const supabase = createClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     full_name: "",
@@ -40,6 +45,7 @@ export default function SettingsPage() {
         github_username: profile.github_username || "",
         linkedin_url: profile.linkedin_url || "",
       });
+      setAvatarUrl(profile.avatar_url || null);
     }
   }, [profile]);
 
@@ -48,6 +54,55 @@ export default function SettingsPage() {
       router.push("/login");
     }
   }, [user, router]);
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "Please select an image file" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: "error", text: "Image must be less than 5MB" });
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    setMessage(null);
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = user.id + "-" + Date.now() + "." + fileExt;
+      const filePath = "avatars/" + fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      setAvatarUrl(publicUrl);
+      setMessage({ type: "success", text: "Profile picture updated!" });
+    } catch (error: any) {
+      console.error("Avatar upload error:", error);
+      setMessage({ type: "error", text: error.message || "Failed to upload avatar" });
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,6 +134,61 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold text-[#FAFAFA] mb-8">Settings</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Picture</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-6">
+                  <div className="relative group">
+                    <Avatar
+                      src={avatarUrl}
+                      fallback={formData.full_name || formData.username || user.email}
+                      size="xl"
+                      className="w-24 h-24"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                      className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-not-allowed"
+                    >
+                      {isUploadingAvatar ? (
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                      ) : (
+                        <Camera className="w-6 h-6 text-white" />
+                      )}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      className="hidden"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-[#A1A1A1] mb-2">
+                      Click on the avatar to upload a new profile picture.
+                    </p>
+                    <p className="text-xs text-[#737373]">
+                      Recommended: Square image, at least 200x200px. Max 5MB.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                    >
+                      {isUploadingAvatar ? "Uploading..." : "Change Picture"}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
@@ -142,7 +252,7 @@ export default function SettingsPage() {
             </Card>
 
             {message && (
-              <p className={`text-sm ${message.type === "success" ? "text-[#22C55E]" : "text-[#E53935]"}`}>
+              <p className={"text-sm " + (message.type === "success" ? "text-[#22C55E]" : "text-[#E53935]")}>
                 {message.text}
               </p>
             )}
