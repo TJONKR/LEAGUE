@@ -6,6 +6,7 @@ import { AvatarGroup } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,19 +20,19 @@ export default async function HackathonsPage() {
 
   const { data: upcoming } = await supabase
     .from("hackathons")
-    .select(`
+    .select(\`
       *,
       hackathon_participants(user_id, profiles(avatar_url, full_name))
-    `)
+    \`)
     .gte("end_date", now)
     .order("start_date", { ascending: true });
 
   const { data: past } = await supabase
     .from("hackathons")
-    .select(`
+    .select(\`
       *,
       hackathon_participants(user_id, profiles(avatar_url, full_name))
-    `)
+    \`)
     .lt("end_date", now)
     .order("start_date", { ascending: false })
     .limit(6);
@@ -76,9 +77,23 @@ export default async function HackathonsPage() {
                 const isOngoing = new Date() >= startDate && new Date() <= endDate;
 
                 return (
-                  <Link key={hackathon.id} href={`/hackathons/${hackathon.slug}`}>
-                    <Card hover className="h-full">
-                      <div className="h-32 bg-gradient-to-br from-[#E53935]/20 to-[#FF7043]/10 rounded-t-xl relative">
+                  <Link key={hackathon.id} href={\`/hackathons/\${hackathon.slug}\`}>
+                    <Card hover className="h-full overflow-hidden">
+                      {/* Cover Image Header */}
+                      <div className="h-32 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
+                        {hackathon.cover_image ? (
+                          <Image
+                            src={hackathon.cover_image}
+                            alt={hackathon.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#E53935]/20 to-[#FF7043]/10" />
+                        )}
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent" />
+                        
                         {isOngoing && (
                           <Badge variant="success" size="sm" className="absolute top-3 right-3">
                             Live
@@ -134,8 +149,22 @@ export default async function HackathonsPage() {
                   const participants = hackathon.hackathon_participants || [];
 
                   return (
-                    <Link key={hackathon.id} href={`/hackathons/${hackathon.slug}`}>
-                      <Card hover className="h-full opacity-60 hover:opacity-100 transition-opacity">
+                    <Link key={hackathon.id} href={\`/hackathons/\${hackathon.slug}\`}>
+                      <Card hover className="h-full overflow-hidden opacity-60 hover:opacity-100 transition-opacity">
+                        {/* Cover Image Header for Past */}
+                        <div className="h-24 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
+                          {hackathon.cover_image ? (
+                            <Image
+                              src={hackathon.cover_image}
+                              alt={hackathon.title}
+                              fill
+                              className="object-cover grayscale"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#E53935]/10 to-[#FF7043]/5" />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent" />
+                        </div>
                         <div className="p-5">
                           <h3 className="font-semibold text-[#FAFAFA] mb-2">{hackathon.title}</h3>
                           <div className="flex items-center gap-2 text-sm text-[#737373]">
