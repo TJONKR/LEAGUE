@@ -43,7 +43,7 @@ export default async function LeaderboardPage() {
             <h1 className="text-4xl sm:text-5xl font-bold text-[#FAFAFA] mb-4">
               Global Leaderboard
             </h1>
-            <p className="text-lg text-[#737373] max-w-md mx-auto">
+            <p className="text-lg text-[#737373] text-center">
               The top builders competing for glory
             </p>
           </div>
