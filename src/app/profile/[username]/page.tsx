@@ -121,7 +121,8 @@ export default async function ProfilePage({ params }: PageProps) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const isOwnProfile = user?.id === profile.id;
+  // Compare with profile.auth_id, not profile.id (which is a separate UUID)
+  const isOwnProfile = user?.id === profile.auth_id;
 
   // Get user ranking
   const { data: rankings } = await supabase
