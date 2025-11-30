@@ -47,8 +47,8 @@ export function Header() {
       <Container size="xl">
         <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center group">
-            <div className="w-8 h-8 bg-[#E53935] rounded-lg flex items-center justify-center group-hover:bg-[#EF5350] transition-colors">
-              <img src = 'logo.png'></img>
+            <div className="w-[100px] h-[100px] flex items-center justify-center group-hover:opacity-80 transition-opacity">
+              <img src='logo.png' alt="Logo" className="w-full h-full" />
             </div>
           </Link>
 
