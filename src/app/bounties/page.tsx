@@ -39,7 +39,7 @@ export default async function BountiesPage({
   // Filter by status
   const statusFilter = params.status || "open";
   if (statusFilter !== "all") {
-    query = query.eq("status", statusFilter);
+    query = query.eq("status", statusFilter as "open" | "in_review" | "awarded" | "completed" | "cancelled");
   }
 
   // Filter by tag
