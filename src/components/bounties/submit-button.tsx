@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Send, Check, Plus, ExternalLink } from "lucide-react";
+import { Send, Check, Plus } from "lucide-react";
 import type { Project, Bounty } from "@/types/database";
 
 interface SubmitButtonProps {
@@ -19,7 +19,7 @@ interface SubmitButtonProps {
 }
 
 export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const supabase = createClient();
   
@@ -28,22 +28,22 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
 
-  const canSubmit = bounty.status === "open" && user && !existingSubmission;
+  const canSubmit = bounty.status === "open" && user && profile && !existingSubmission;
   const isDeadlinePassed = new Date(bounty.deadline) < new Date();
 
   useEffect(() => {
-    if (showModal && user) {
+    if (showModal && profile) {
       fetchUserProjects();
     }
-  }, [showModal, user]);
+  }, [showModal, profile]);
 
   async function fetchUserProjects() {
-    if (!user) return;
+    if (!profile) return;
 
     const { data } = await supabase
       .from("projects")
       .select("*")
-      .eq("creator_id", user.id)
+      .eq("creator_id", profile.id) // Use profile.id for FK reference
       .order("created_at", { ascending: false });
 
     if (data) {
@@ -52,14 +52,14 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
   }
 
   async function handleSubmit() {
-    if (!user || !selectedProjectId) return;
+    if (!profile || !selectedProjectId) return;
 
     setIsLoading(true);
 
     const { error } = await supabase.from("bounty_submissions").insert({
       bounty_id: bounty.id,
       project_id: selectedProjectId,
-      submitted_by: user.id,
+      submitted_by: profile.id, // Use profile.id for FK reference
     });
 
     if (error) {
@@ -99,11 +99,17 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
     router.refresh();
   }
 
-  // Not logged in
+  // Not logged in - redirect to login with current page as redirect target
   if (!user) {
+    const handleLoginRedirect = () => {
+      // Get current pathname using window.location (since this is a client component)
+      const currentPath = typeof window !== "undefined" ? window.location.pathname : "/";
+      router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+    };
+    
     return (
       <Button
-        onClick={() => router.push("/login")}
+        onClick={handleLoginRedirect}
         className="w-full rounded-full"
       >
         Sign in to Submit
@@ -159,6 +165,7 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
       <Button
         onClick={() => setShowModal(true)}
         className="w-full rounded-full bg-[#F59E0B] hover:bg-[#D97706] text-black"
+        disabled={!profile}
       >
         <Send className="w-4 h-4 mr-2" />
         Submit Project
@@ -252,5 +259,3 @@ export function SubmitButton({ bounty, existingSubmission }: SubmitButtonProps) 
     </>
   );
 }
-
-

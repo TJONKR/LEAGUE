@@ -14,7 +14,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { Camera, Loader2, LogOut } from "lucide-react";
 
 export default function SettingsPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,10 +50,11 @@ export default function SettingsPage() {
   }, [profile]);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
+    // Only redirect if auth is done loading AND user is not logged in
+    if (!isAuthLoading && !user) {
+      router.push("/login?redirect=/settings");
     }
-  }, [user, router]);
+  }, [user, isAuthLoading, router]);
 
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -131,7 +132,20 @@ export default function SettingsPage() {
     router.refresh();
   }
 
-  if (!user) return null;
+  // Show loading or nothing while auth is being checked
+  if (isAuthLoading || !user) {
+    return (
+      <AppShell>
+        <section className="py-12">
+          <Container size="md">
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-[#737373]" />
+            </div>
+          </Container>
+        </section>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>

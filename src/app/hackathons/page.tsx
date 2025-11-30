@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { isValidUrl } from "@/lib/utils/url";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -81,7 +82,7 @@ export default async function HackathonsPage() {
                     <Card hover className="h-full overflow-hidden">
                       {/* Cover Image Header */}
                       <div className="h-32 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
-                        {hackathon.cover_image ? (
+                        {isValidUrl(hackathon.cover_image) ? (
                           <Image
                             src={hackathon.cover_image}
                             alt={hackathon.title}
@@ -153,7 +154,7 @@ export default async function HackathonsPage() {
                       <Card hover className="h-full overflow-hidden opacity-60 hover:opacity-100 transition-opacity">
                         {/* Cover Image Header for Past */}
                         <div className="h-24 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
-                          {hackathon.cover_image ? (
+                          {isValidUrl(hackathon.cover_image) ? (
                             <Image
                               src={hackathon.cover_image}
                               alt={hackathon.title}

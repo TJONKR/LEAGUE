@@ -1,3 +1,4 @@
+import { isValidUrl } from "@/lib/utils/url";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -80,7 +81,7 @@ export default async function HackathonPage({ params }: PageProps) {
     <AppShell>
       {/* Cover Image */}
       <div className="relative h-48 sm:h-64 lg:h-80 bg-background-elevated">
-        {hackathon.cover_image ? (
+        {isValidUrl(hackathon.cover_image) ? (
           <Image
             src={hackathon.cover_image}
             alt={hackathon.title}

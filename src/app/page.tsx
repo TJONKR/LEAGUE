@@ -1,3 +1,4 @@
+import { isValidUrl } from "@/lib/utils/url";
 import { createClient } from "@/lib/supabase/server";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -175,7 +176,7 @@ export default async function HomePage() {
                     <Card hover className="h-full overflow-hidden group">
                       {/* Cover Image */}
                       <div className="h-32 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
-                        {hackathon.cover_image ? (
+                        {isValidUrl(hackathon.cover_image) ? (
                           <Image
                             src={hackathon.cover_image}
                             alt={hackathon.title}

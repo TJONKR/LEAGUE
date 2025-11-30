@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
 import { SubmitButton } from "@/components/bounties/submit-button";
 import { SubmissionList } from "@/components/bounties/submission-list";
+import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -97,6 +98,17 @@ export default async function BountyDetailPage({ params }: PageProps) {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Get user's profile if logged in
+  let profile = null;
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+    profile = data;
+  }
+
   // Get bounty with poster info
   const { data: bounty, error } = await supabase
     .from("bounties")
@@ -123,11 +135,11 @@ export default async function BountyDetailPage({ params }: PageProps) {
     .order("submitted_at", { ascending: false });
 
   // Check if current user has already submitted
-  const userSubmission = user
-    ? submissions?.find((s) => s.submitted_by === user.id)
+  const userSubmission = profile
+    ? submissions?.find((s) => s.submitted_by === profile.id)
     : null;
 
-  const isPoster = user?.id === bounty.poster_id;
+  const isPoster = profile?.id === bounty.poster_id;
   const statusBadge = getStatusBadge(bounty.status);
   const deadlineInfo = formatDeadline(bounty.deadline);
 
@@ -151,7 +163,7 @@ export default async function BountyDetailPage({ params }: PageProps) {
               <Card className="overflow-hidden">
                 {/* Cover Image */}
                 <div className="h-48 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
-                  {bounty.cover_image ? (
+                  {isValidUrl(bounty.cover_image) ? (
                     <Image
                       src={bounty.cover_image}
                       alt={bounty.title}

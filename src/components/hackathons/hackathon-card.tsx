@@ -1,3 +1,4 @@
+import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -27,7 +28,7 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
         <div className="flex gap-4 p-4">
           {/* Cover Image */}
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden flex-shrink-0 bg-background-hover">
-            {hackathon.cover_image ? (
+            {isValidUrl(hackathon.cover_image) ? (
               <Image
                 src={hackathon.cover_image}
                 alt={hackathon.title}
@@ -124,6 +125,7 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
     </Link>
   );
 }
+
 
 
 

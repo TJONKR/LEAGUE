@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
+import { isValidUrl } from "@/lib/utils/url";
 import { Clock, Users } from "lucide-react";
 import type { BountyWithPoster, BountyStatus } from "@/types/database";
 
@@ -55,7 +56,7 @@ export function BountyCard({ bounty, submissionCount = 0 }: BountyCardProps) {
       <Card hover className="h-full overflow-hidden group">
         {/* Cover Image Header */}
         <div className="h-28 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
-          {bounty.cover_image ? (
+          {isValidUrl(bounty.cover_image) ? (
             <Image
               src={bounty.cover_image}
               alt={bounty.title}

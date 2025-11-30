@@ -1,3 +1,4 @@
+import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -21,7 +22,7 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
         <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-[#1C1C1C] transition-colors group">
           {/* Thumbnail */}
           <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-[#1C1C1C]">
-            {project.cover_image ? (
+            {isValidUrl(project.cover_image) ? (
               <Image
                 src={project.cover_image}
                 alt={project.title}
@@ -60,7 +61,7 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
       <Card hover className="h-full">
         {/* Cover Image */}
         <div className="relative h-40 bg-[#1C1C1C]">
-          {project.cover_image ? (
+          {isValidUrl(project.cover_image) ? (
             <Image
               src={project.cover_image}
               alt={project.title}
@@ -127,4 +128,5 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
     </Link>
   );
 }
+
 

@@ -30,7 +30,7 @@ const SUGGESTED_TAGS = [
 ];
 
 export default function NewBountyPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const supabase = createClient();
 
@@ -57,8 +57,8 @@ export default function NewBountyPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user) {
-      router.push("/login");
+    if (!user || !profile) {
+      router.push("/login?redirect=/bounties/new");
       return;
     }
 
@@ -90,7 +90,7 @@ export default function NewBountyPage() {
         deposit_amount: rewardAmount,
         deadline: deadline.toISOString(),
         tags: formData.tags.length > 0 ? formData.tags : null,
-        poster_id: user.id,
+        poster_id: profile.id,
         slug,
       })
       .select()
@@ -121,7 +121,7 @@ export default function NewBountyPage() {
               <p className="text-sm text-[#737373] mb-6">
                 You need to be signed in to post a bounty.
               </p>
-              <Button onClick={() => router.push("/login")} className="rounded-full">
+              <Button onClick={() => router.push("/login?redirect=/bounties/new")} className="rounded-full">
                 Sign In
               </Button>
             </Card>
