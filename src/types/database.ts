@@ -254,6 +254,58 @@ export type Database = {
           },
         ]
       }
+      peer_honors: {
+        Row: {
+          id: string
+          giver_id: string
+          receiver_id: string
+          project_id: string
+          honor_type: Database["public"]["Enums"]["honor_type"]
+          points: number
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          giver_id: string
+          receiver_id: string
+          project_id: string
+          honor_type: Database["public"]["Enums"]["honor_type"]
+          points?: number
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          giver_id?: string
+          receiver_id?: string
+          project_id?: string
+          honor_type?: Database["public"]["Enums"]["honor_type"]
+          points?: number
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peer_honors_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peer_honors_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peer_honors_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           altered_avatar_url: string | null
@@ -458,6 +510,12 @@ export type Database = {
         | "second_place"
         | "third_place"
       bounty_status: "open" | "in_review" | "awarded" | "completed" | "cancelled"
+      honor_type:
+        | "great_teammate"
+        | "problem_solver"
+        | "creative_genius"
+        | "clutch_player"
+        | "design_master"
       participant_role: "participant" | "organizer"
     }
     CompositeTypes: {
@@ -476,9 +534,11 @@ export type ProjectVote = Database["public"]["Tables"]["project_votes"]["Row"];
 export type Achievement = Database["public"]["Tables"]["achievements"]["Row"];
 export type Bounty = Database["public"]["Tables"]["bounties"]["Row"];
 export type BountySubmission = Database["public"]["Tables"]["bounty_submissions"]["Row"];
+export type PeerHonor = Database["public"]["Tables"]["peer_honors"]["Row"];
 
 // Enum types
 export type BountyStatus = Database["public"]["Enums"]["bounty_status"];
+export type HonorType = Database["public"]["Enums"]["honor_type"];
 
 // Extended types with relations
 export type HackathonWithOrganizer = Hackathon & {
@@ -513,4 +573,10 @@ export type BountyWithDetails = Bounty & {
     project: Project; 
     submitter: Profile;
   })[];
+};
+
+export type PeerHonorWithDetails = PeerHonor & {
+  giver: Profile;
+  receiver: Profile;
+  project: Project;
 };
