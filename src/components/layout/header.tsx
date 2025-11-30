@@ -48,7 +48,7 @@ export function Header() {
         <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center group">
             <div className="w-8 h-8 bg-[#E53935] rounded-lg flex items-center justify-center group-hover:bg-[#EF5350] transition-colors">
-              <span className="text-white font-bold text-sm">L</span>
+              <img src = 'logo.png'></img>
             </div>
           </Link>
 

@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   description:
     "The platform for builders. Discover hackathons, showcase projects, and climb the leaderboard.",
   keywords: ["hackathon", "builders", "projects", "leaderboard", "developers"],
+  icons: {
+    icon: "/icon.ico",
+  },
 };
 
 export default function RootLayout({
