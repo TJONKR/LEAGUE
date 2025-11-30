@@ -61,6 +61,7 @@ export type Database = {
           title: string
           description: string | null
           reward_amount: number
+          deposit_amount: number
           deadline: string
           status: Database["public"]["Enums"]["bounty_status"]
           tags: string[] | null
@@ -75,6 +76,7 @@ export type Database = {
           title: string
           description?: string | null
           reward_amount: number
+          deposit_amount: number
           deadline: string
           status?: Database["public"]["Enums"]["bounty_status"]
           tags?: string[] | null
@@ -89,6 +91,7 @@ export type Database = {
           title?: string
           description?: string | null
           reward_amount?: number
+          deposit_amount?: number
           deadline?: string
           status?: Database["public"]["Enums"]["bounty_status"]
           tags?: string[] | null
@@ -254,58 +257,6 @@ export type Database = {
           },
         ]
       }
-      peer_honors: {
-        Row: {
-          id: string
-          giver_id: string
-          receiver_id: string
-          project_id: string
-          honor_type: Database["public"]["Enums"]["honor_type"]
-          points: number
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          giver_id: string
-          receiver_id: string
-          project_id: string
-          honor_type: Database["public"]["Enums"]["honor_type"]
-          points?: number
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          giver_id?: string
-          receiver_id?: string
-          project_id?: string
-          honor_type?: Database["public"]["Enums"]["honor_type"]
-          points?: number
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "peer_honors_giver_id_fkey"
-            columns: ["giver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "peer_honors_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "peer_honors_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           altered_avatar_url: string | null
@@ -437,7 +388,6 @@ export type Database = {
       }
       projects: {
         Row: {
-          bounty_id: string | null
           cover_image: string | null
           created_at: string | null
           creator_id: string
@@ -452,7 +402,6 @@ export type Database = {
           vote_count: number | null
         }
         Insert: {
-          bounty_id?: string | null
           cover_image?: string | null
           created_at?: string | null
           creator_id: string
@@ -467,7 +416,6 @@ export type Database = {
           vote_count?: number | null
         }
         Update: {
-          bounty_id?: string | null
           cover_image?: string | null
           created_at?: string | null
           creator_id?: string
@@ -483,13 +431,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "projects_bounty_id_fkey"
-            columns: ["bounty_id"]
-            isOneToOne: false
-            referencedRelation: "bounties"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "projects_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
@@ -501,53 +442,6 @@ export type Database = {
             columns: ["hackathon_id"]
             isOneToOne: false
             referencedRelation: "hackathons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      stacks: {
-        Row: {
-          id: string
-          user_id: string
-          github_username: string
-          top_repos: Json
-          languages: Json
-          total_repos: number
-          total_stars: number
-          total_forks: number
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          github_username: string
-          top_repos?: Json
-          languages?: Json
-          total_repos?: number
-          total_stars?: number
-          total_forks?: number
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          github_username?: string
-          top_repos?: Json
-          languages?: Json
-          total_repos?: number
-          total_stars?: number
-          total_forks?: number
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "stacks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -567,12 +461,6 @@ export type Database = {
         | "second_place"
         | "third_place"
       bounty_status: "open" | "in_review" | "awarded" | "completed" | "cancelled"
-      honor_type:
-        | "great_teammate"
-        | "problem_solver"
-        | "creative_genius"
-        | "clutch_player"
-        | "design_master"
       participant_role: "participant" | "organizer"
     }
     CompositeTypes: {
@@ -591,41 +479,9 @@ export type ProjectVote = Database["public"]["Tables"]["project_votes"]["Row"];
 export type Achievement = Database["public"]["Tables"]["achievements"]["Row"];
 export type Bounty = Database["public"]["Tables"]["bounties"]["Row"];
 export type BountySubmission = Database["public"]["Tables"]["bounty_submissions"]["Row"];
-export type PeerHonor = Database["public"]["Tables"]["peer_honors"]["Row"];
-export type Stack = Database["public"]["Tables"]["stacks"]["Row"];
 
 // Enum types
 export type BountyStatus = Database["public"]["Enums"]["bounty_status"];
-export type HonorType = Database["public"]["Enums"]["honor_type"];
-
-// GitHub repo structure for stacks
-export interface GitHubRepo {
-  name: string;
-  full_name: string;
-  description: string | null;
-  url: string;
-  stars: number;
-  forks: number;
-  primary_language: string | null;
-  languages: Record<string, number>; // language -> percentage
-}
-
-// Language stats structure
-export type LanguageStats = Record<string, number>; // language -> percentage
-
-// Stack with typed JSON fields
-export interface StackWithDetails {
-  id: string;
-  user_id: string;
-  github_username: string;
-  top_repos: GitHubRepo[];
-  languages: LanguageStats;
-  total_repos: number;
-  total_stars: number;
-  total_forks: number;
-  created_at: string | null;
-  updated_at: string | null;
-}
 
 // Extended types with relations
 export type HackathonWithOrganizer = Hackathon & {
@@ -641,7 +497,6 @@ export type HackathonWithDetails = Hackathon & {
 export type ProjectWithDetails = Project & {
   creator: Profile;
   hackathon: Hackathon | null;
-  bounty: Bounty | null;
   members: (ProjectMember & { profile: Profile })[];
 };
 
@@ -649,10 +504,6 @@ export type ProfileWithStats = Profile & {
   hackathons_count: number;
   projects_count: number;
   achievements: Achievement[];
-};
-
-export type ProfileWithStack = Profile & {
-  stack: StackWithDetails | null;
 };
 
 export type BountyWithPoster = Bounty & {
@@ -665,10 +516,4 @@ export type BountyWithDetails = Bounty & {
     project: Project; 
     submitter: Profile;
   })[];
-};
-
-export type PeerHonorWithDetails = PeerHonor & {
-  giver: Profile;
-  receiver: Profile;
-  project: Project;
 };

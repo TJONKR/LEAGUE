@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   let supabaseResponse = NextResponse.next({ request });
@@ -27,7 +27,11 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // IMPORTANT: Always call getUser() to refresh the auth token
+  // This must happen before any other logic
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // Public paths that don't need profile check
   const publicPaths = ["/login", "/signup", "/onboarding", "/auth/callback"];
@@ -43,18 +47,41 @@ export async function proxy(request: NextRequest) {
 
     // No profile = needs onboarding
     if (!profile) {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
+      const redirectResponse = NextResponse.redirect(
+        new URL("/onboarding", request.url)
+      );
+      // Preserve cookies on redirect to maintain session
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, {
+          ...cookie,
+        });
+      });
+      return redirectResponse;
     }
   }
 
   // Protected paths need login
-  const protectedPaths = ["/settings", "/hackathons/new", "/bounties/new", "/projects/new"];
-  const isProtectedPath = protectedPaths.some((path) => pathname.startsWith(path));
-  
+  const protectedPaths = [
+    "/settings",
+    "/hackathons/new",
+    "/bounties/new",
+    "/projects/new",
+  ];
+  const isProtectedPath = protectedPaths.some((path) =>
+    pathname.startsWith(path)
+  );
+
   if (isProtectedPath && !user) {
     const url = new URL("/login", request.url);
     url.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(url);
+    const redirectResponse = NextResponse.redirect(url);
+    // Preserve cookies on redirect
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, {
+        ...cookie,
+      });
+    });
+    return redirectResponse;
   }
 
   return supabaseResponse;
@@ -62,6 +89,13 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - public assets (images, etc.)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

@@ -92,3 +92,4 @@ CREATE TRIGGER on_honor_given
 -- SELECT * FROM pg_type WHERE typname = 'honor_type';
 -- SELECT * FROM peer_honors LIMIT 1;
 
+

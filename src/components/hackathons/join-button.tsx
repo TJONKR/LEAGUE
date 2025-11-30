@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Check, LogIn, UserPlus, Crown } from "lucide-react";
 import Link from "next/link";
@@ -17,31 +18,57 @@ interface JoinHackathonButtonProps {
 
 export function JoinHackathonButton({
   hackathonId,
-  isParticipant,
+  isParticipant: serverIsParticipant,
   isOrganizer,
   isLoggedIn,
   hasEnded,
 }: JoinHackathonButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [clientIsParticipant, setClientIsParticipant] = useState<boolean | null>(null);
   const router = useRouter();
   const supabase = createClient();
+  const { profile, isLoading: authLoading } = useAuth();
+  
+  // Check participant status on client-side as fallback
+  const isParticipant = clientIsParticipant ?? serverIsParticipant;
+  
+  // Client-side participant check
+  useEffect(() => {
+    if (profile) {
+      supabase
+        .from("hackathon_participants")
+        .select("id")
+        .eq("hackathon_id", hackathonId)
+        .eq("user_id", profile.id)
+        .single()
+        .then(({ data }) => {
+          setClientIsParticipant(!!data);
+        });
+    }
+  }, [profile, hackathonId, supabase]);
 
   async function handleJoin() {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !profile) return;
     
     setIsLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      await supabase.from("hackathon_participants").insert({
+      const { error } = await supabase.from("hackathon_participants").insert({
         hackathon_id: hackathonId,
-        user_id: user.id,
+        user_id: profile.id,
         role: "participant",
       });
+
+      if (error) {
+        // If already joined (unique constraint), just refresh to show correct state
+        if (error.code === '23505') {
+          setClientIsParticipant(true);
+        } else {
+          console.error("Error joining hackathon:", error);
+          return;
+        }
+      } else {
+        setClientIsParticipant(true);
+      }
 
       router.refresh();
     } catch (error) {
@@ -52,19 +79,19 @@ export function JoinHackathonButton({
   }
 
   async function handleLeave() {
+    if (!profile) return;
+    
     setIsLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      await supabase
+      const { error } = await supabase
         .from("hackathon_participants")
         .delete()
         .eq("hackathon_id", hackathonId)
-        .eq("user_id", user.id);
+        .eq("user_id", profile.id);
+
+      if (!error) {
+        setClientIsParticipant(false);
+      }
 
       router.refresh();
     } catch (error) {
@@ -127,14 +154,12 @@ export function JoinHackathonButton({
       className="w-full"
       size="lg"
       onClick={handleJoin}
-      isLoading={isLoading}
+      isLoading={isLoading || authLoading}
+      disabled={!profile && !authLoading}
     >
       <UserPlus className="w-4 h-4 mr-2" />
       Join Hackathon
     </Button>
   );
 }
-
-
-
 

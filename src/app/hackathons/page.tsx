@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import { isValidUrl } from "@/lib/utils/url";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AvatarGroup } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
+import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";

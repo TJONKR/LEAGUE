@@ -3,6 +3,7 @@
 import { useState, useOptimistic } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
@@ -33,30 +34,25 @@ export function VoteButton({
   );
   const router = useRouter();
   const supabase = createClient();
+  const { profile } = useAuth();
 
   async function handleVote() {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !profile) return;
     
     setIsPending(true);
     setOptimisticVote(!optimisticVote.hasVoted);
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
       if (optimisticVote.hasVoted) {
         await supabase
           .from("project_votes")
           .delete()
           .eq("project_id", projectId)
-          .eq("user_id", user.id);
+          .eq("user_id", profile.id); // Use profile.id for FK reference
       } else {
         await supabase.from("project_votes").insert({
           project_id: projectId,
-          user_id: user.id,
+          user_id: profile.id, // Use profile.id for FK reference
         });
       }
 
@@ -92,7 +88,7 @@ export function VoteButton({
       variant={optimisticVote.hasVoted ? "default" : "outline"}
       size={size}
       onClick={handleVote}
-      disabled={isPending}
+      disabled={isPending || !profile}
       className={cn(
         "gap-2 transition-all",
         size === "lg" && "px-6",
@@ -110,5 +106,4 @@ export function VoteButton({
     </Button>
   );
 }
-
 

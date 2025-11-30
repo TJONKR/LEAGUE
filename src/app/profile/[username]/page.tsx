@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { HackathonCard } from "@/components/hackathons/hackathon-card";
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProfileHonors } from "@/components/honors";
+import { StackOverview } from "@/components/stacks";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/utils";
 import {
@@ -24,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import type { Profile, PeerHonor } from "@/types/database";
+import type { Profile, PeerHonor, StackWithDetails } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -108,6 +109,13 @@ export default async function ProfilePage({ params }: PageProps) {
     .order("created_at", { ascending: false }) as { 
       data: (PeerHonor & { project: { title: string; slug: string } })[] | null 
     };
+
+  // Get stack data (GitHub repos & languages)
+  const { data: stackData } = await supabase
+    .from("stacks")
+    .select("*")
+    .eq("user_id", profile.id)
+    .single() as { data: StackWithDetails | null };
 
   // Calculate stats
   const hackathonsHosted = participations?.filter(
@@ -318,6 +326,17 @@ export default async function ProfilePage({ params }: PageProps) {
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Tech Stack & GitHub Repos - Only show if user has GitHub connected */}
+            {(stackData || profile.github_username) && (
+              <section>
+                <h2 className="text-xl font-semibold text-[#FAFAFA] mb-6 flex items-center gap-2">
+                  <Github className="w-5 h-5" />
+                  Tech Stack & Repos
+                </h2>
+                <StackOverview stack={stackData} />
+              </section>
+            )}
+
             {/* Projects */}
             <section>
               <h2 className="text-xl font-semibold text-[#FAFAFA] mb-8 flex items-center gap-2">
@@ -399,4 +418,3 @@ export default async function ProfilePage({ params }: PageProps) {
     </AppShell>
   );
 }
-

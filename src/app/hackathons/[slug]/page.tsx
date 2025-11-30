@@ -1,4 +1,3 @@
-import { isValidUrl } from "@/lib/utils/url";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -7,6 +6,7 @@ import { Avatar, AvatarGroup } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, formatDateTime } from "@/lib/utils";
+import { isValidUrl } from "@/lib/utils/url";
 import { Calendar, MapPin, Globe, Users, ExternalLink, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -68,10 +68,21 @@ export default async function HackathonPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Get user's profile if logged in
+  let profile = null;
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+    profile = data;
+  }
+
   const isParticipant = hackathon.participants?.some(
-    (p) => p.user_id === user?.id
+    (p) => p.user_id === profile?.id
   );
-  const isOrganizer = hackathon.organizer_id === user?.id;
+  const isOrganizer = hackathon.organizer_id === profile?.id;
   const isUpcoming = new Date(hackathon.start_date) > new Date();
   const isOngoing =
     new Date(hackathon.start_date) <= new Date() &&

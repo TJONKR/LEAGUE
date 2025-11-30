@@ -1,9 +1,9 @@
-import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { isValidUrl } from "@/lib/utils/url";
 import { Heart, Github, ExternalLink, Folder } from "lucide-react";
 import type { Project, Profile, Hackathon } from "@/types/database";
 
@@ -128,5 +128,6 @@ export function ProjectCard({ project, compact }: ProjectCardProps) {
     </Link>
   );
 }
+
 
 

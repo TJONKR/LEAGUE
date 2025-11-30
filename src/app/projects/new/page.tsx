@@ -25,7 +25,7 @@ function NewProjectForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hackathonId = searchParams.get("hackathon");
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const supabase = createClient();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function NewProjectForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !profile) return;
 
     setIsLoading(true);
     setError(null);
@@ -99,7 +99,7 @@ function NewProjectForm() {
           github_url: githubUrl || null,
           demo_url: demoUrl || null,
           hackathon_id: selectedHackathon || null,
-          creator_id: user.id,
+          creator_id: profile.id,
         })
         .select()
         .single();

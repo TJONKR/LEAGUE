@@ -19,12 +19,12 @@ export default function NewHackathonPage() {
   const [isOnline, setIsOnline] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !profile) return;
 
     setIsLoading(true);
     setError(null);
@@ -51,7 +51,7 @@ export default function NewHackathonPage() {
           start_date: new Date(startDate).toISOString(),
           end_date: new Date(endDate).toISOString(),
           max_participants: maxParticipants ? parseInt(maxParticipants) : null,
-          organizer_id: user.id,
+          organizer_id: profile.id,
         })
         .select()
         .single();
@@ -61,7 +61,7 @@ export default function NewHackathonPage() {
       // Auto-join as organizer
       await supabase.from("hackathon_participants").insert({
         hackathon_id: data.id,
-        user_id: user.id,
+        user_id: profile.id,
         role: "organizer",
       });
 
@@ -192,6 +192,7 @@ export default function NewHackathonPage() {
     </AppShell>
   );
 }
+
 
 
 

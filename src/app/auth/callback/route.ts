@@ -8,9 +8,22 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: { user }, error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error) {
+    if (!error && user) {
+      // Check if user has a claimed profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
+
+      // If no profile, redirect to onboarding
+      if (!profile) {
+        return NextResponse.redirect(`${origin}/onboarding`);
+      }
+
+      // Has profile, go to intended destination
       return NextResponse.redirect(`${origin}${redirect}`);
     }
   }
@@ -18,7 +31,4 @@ export async function GET(request: Request) {
   // Return to login page with error
   return NextResponse.redirect(`${origin}/login?error=auth_failed`);
 }
-
-
-
 

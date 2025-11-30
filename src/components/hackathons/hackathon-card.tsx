@@ -60,19 +60,19 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
               )}
             </div>
 
-            {/* Organizer */}
-            {hackathon.organizer && hackathon.organizer.username && (
+            {/* Organizer - only render if organizer exists */}
+            {hackathon.organizer ? (
               <div className="flex items-center gap-2 mb-2">
                 <Avatar
-                  src={hackathon.organizer?.altered_avatar_url || hackathon.organizer?.avatar_url || hackathon.organizer?.fetched_url}
-                  fallback={hackathon.organizer?.full_name || hackathon.organizer?.username || 'O'}
+                  src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
+                  fallback={hackathon.organizer.full_name || hackathon.organizer.username || "O"}
                   size="xs"
                 />
                 <span className="text-sm text-foreground-muted truncate">
-                  {hackathon.organizer?.full_name || hackathon.organizer?.username}
+                  {hackathon.organizer.full_name || hackathon.organizer.username}
                 </span>
               </div>
-            )}
+            ) : null}
 
             {/* Date */}
             <div className="flex items-center gap-1.5 text-sm text-foreground-muted mb-2">
@@ -104,8 +104,8 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
                 <div className="flex items-center gap-2">
                   <AvatarGroup
                     avatars={hackathon.participants.slice(0, 4).map((p) => ({
-                      src: p.profile.altered_avatar_url || p.profile.avatar_url || p.profile.fetched_url,
-                      fallback: p.profile.full_name || p.profile.username,
+                      src: p.profile?.altered_avatar_url || p.profile?.avatar_url || p.profile?.fetched_url,
+                      fallback: p.profile?.full_name || p.profile?.username || "P",
                     }))}
                     max={4}
                     size="xs"
@@ -127,7 +127,4 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
     </Link>
   );
 }
-
-
-
 

@@ -1,4 +1,3 @@
-import { isValidUrl } from "@/lib/utils/url";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -8,12 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VoteButton } from "@/components/projects/vote-button";
+import { HonorDisplay } from "@/components/honors";
 import { formatDate } from "@/lib/utils";
-import { Github, ExternalLink, Calendar, Users, ArrowLeft, Folder } from "lucide-react";
+import { isValidUrl } from "@/lib/utils/url";
+import { Github, ExternalLink, Calendar, Users, ArrowLeft, Folder, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import type { ProjectWithDetails } from "@/types/database";
+import type { ProjectWithDetails, PeerHonor, Profile } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -60,13 +61,24 @@ export default async function ProjectPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let hasVoted = false;
+  // Get user's profile if logged in
+  let profile = null;
   if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+    profile = data;
+  }
+
+  let hasVoted = false;
+  if (profile) {
     const { data: vote } = await supabase
       .from("project_votes")
       .select("id")
       .eq("project_id", project.id)
-      .eq("user_id", user.id)
+      .eq("user_id", profile.id)
       .single();
     hasVoted = !!vote;
   }
@@ -78,6 +90,25 @@ export default async function ProjectPage({ params }: PageProps) {
       role: m.role || "Member",
     })),
   ];
+
+  // Check if current user is a team member
+  const isTeamMember = profile
+    ? teamMembers.some((m) => m.profile.id === profile.id)
+    : false;
+
+  // Fetch honors for this project
+  const { data: honors } = await supabase
+    .from("peer_honors")
+    .select(`
+      *,
+      receiver:profiles!peer_honors_receiver_id_fkey(*)
+    `)
+    .eq("project_id", project.id) as { data: (PeerHonor & { receiver: Profile })[] | null };
+
+  // Check honor window (24h after hackathon ends, or always available if no hackathon)
+  const canHonorBasedOnTime = project.hackathon
+    ? new Date() <= new Date(new Date(project.hackathon.end_date).getTime() + 24 * 60 * 60 * 1000)
+    : true;
 
   return (
     <AppShell>
@@ -122,13 +153,6 @@ export default async function ProjectPage({ params }: PageProps) {
               </Link>
             )}
           </div>
-          <VoteButton
-            projectId={project.id}
-            voteCount={project.vote_count ?? 0}
-            hasVoted={hasVoted}
-            isLoggedIn={!!user}
-            size="lg"
-          />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -184,6 +208,38 @@ export default async function ProjectPage({ params }: PageProps) {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Vote Card - Prominent */}
+            <Card className="border-[#E53935]/30 bg-gradient-to-br from-[#E53935]/5 to-transparent">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Heart className="w-5 h-5 text-[#E53935]" />
+                    <span className="text-2xl font-bold text-[#FAFAFA]">
+                      {project.vote_count ?? 0}
+                    </span>
+                  </div>
+                  <p className="text-sm text-[#737373] mb-4">points from the community</p>
+                  <VoteButton
+                    projectId={project.id}
+                    voteCount={project.vote_count ?? 0}
+                    hasVoted={hasVoted}
+                    isLoggedIn={!!user}
+                    size="lg"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Honors */}
+            <HonorDisplay
+              projectId={project.id}
+              honors={honors || []}
+              teammates={teamMembers}
+              currentUserId={profile?.id || null}
+              isTeamMember={isTeamMember}
+              canHonor={canHonorBasedOnTime}
+            />
+
             {/* Team */}
             <Card>
               <CardHeader>
@@ -230,8 +286,12 @@ export default async function ProjectPage({ params }: PageProps) {
                   </div>
                 )}
                 <div className="flex items-center justify-between">
-                  <span className="text-[#737373]">Votes</span>
-                  <span className="text-[#FAFAFA]">{project.vote_count}</span>
+                  <span className="text-[#737373]">Team size</span>
+                  <span className="text-[#FAFAFA]">{teamMembers.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#737373]">Honors given</span>
+                  <span className="text-[#FAFAFA]">{honors?.length || 0}</span>
                 </div>
               </CardContent>
             </Card>
