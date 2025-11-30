@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "League - Builder Platform",
+    default: "MEGAS - Builders Unite",
     template: "%s | League",
   },
   description:
