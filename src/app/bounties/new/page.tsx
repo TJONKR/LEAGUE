@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
-import { useAuth } from "@/components/providers/auth-provider";
 import { slugify } from "@/lib/utils";
 import { AlertCircle, X } from "lucide-react";
 
@@ -30,7 +29,6 @@ const SUGGESTED_TAGS = [
 ];
 
 export default function NewBountyPage() {
-  const { user, profile } = useAuth();
   const router = useRouter();
   const supabase = createClient();
 
@@ -57,10 +55,6 @@ export default function NewBountyPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !profile) {
-      router.push("/login?redirect=/bounties/new");
-      return;
-    }
 
     setError(null);
 
@@ -81,6 +75,10 @@ export default function NewBountyPage() {
 
     const slug = slugify(formData.title);
 
+    // You'll need to provide a poster_id - either hardcode a system user ID
+    // or get it from somewhere. Replace 'YOUR_SYSTEM_USER_ID' with an actual UUID
+    const posterIdPlaceholder = '00000000-0000-0000-0000-000000000000'; // Replace with actual ID
+    
     const { data: bounty, error: insertError } = await supabase
       .from("bounties")
       .insert({
@@ -90,7 +88,7 @@ export default function NewBountyPage() {
         deposit_amount: rewardAmount,
         deadline: deadline.toISOString(),
         tags: formData.tags.length > 0 ? formData.tags : null,
-        poster_id: profile.id,
+        poster_id: posterIdPlaceholder,
         slug,
       })
       .select()
@@ -108,27 +106,6 @@ export default function NewBountyPage() {
     }
 
     router.push(`/bounties/${slug}`);
-  }
-
-  if (!user) {
-    return (
-      <AppShell>
-        <section className="py-12">
-          <Container size="md">
-            <Card className="p-12 text-center">
-              <div className="text-5xl mb-4">🔐</div>
-              <p className="text-[#FAFAFA] font-medium mb-2">Sign in required</p>
-              <p className="text-sm text-[#737373] mb-6">
-                You need to be signed in to post a bounty.
-              </p>
-              <Button onClick={() => router.push("/login?redirect=/bounties/new")} className="rounded-full">
-                Sign In
-              </Button>
-            </Card>
-          </Container>
-        </section>
-      </AppShell>
-    );
   }
 
   return (
@@ -329,5 +306,3 @@ export default function NewBountyPage() {
     </AppShell>
   );
 }
-
-
