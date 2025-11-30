@@ -1,16 +1,16 @@
-import { isValidUrl } from "@/lib/utils/url";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarGroup } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDateShort } from "@/lib/utils";
+import { isValidUrl } from "@/lib/utils/url";
 import { MapPin, Globe, Users, Calendar } from "lucide-react";
 import type { Hackathon, Profile, HackathonParticipant } from "@/types/database";
 
 interface HackathonCardProps {
   hackathon: Hackathon & {
-    organizer: Profile;
+    organizer: Profile | null;
     participants?: (HackathonParticipant & { profile: Profile })[];
   };
 }
@@ -61,16 +61,18 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
             </div>
 
             {/* Organizer */}
-            <div className="flex items-center gap-2 mb-2">
-              <Avatar
-                src={hackathon.organizer.altered_avatar_url || hackathon.organizer.avatar_url || hackathon.organizer.fetched_url}
-                fallback={hackathon.organizer.full_name || hackathon.organizer.username}
-                size="xs"
-              />
-              <span className="text-sm text-foreground-muted truncate">
-                {hackathon.organizer.full_name || hackathon.organizer.username}
-              </span>
-            </div>
+            {hackathon.organizer && hackathon.organizer.username && (
+              <div className="flex items-center gap-2 mb-2">
+                <Avatar
+                  src={hackathon.organizer?.altered_avatar_url || hackathon.organizer?.avatar_url || hackathon.organizer?.fetched_url}
+                  fallback={hackathon.organizer?.full_name || hackathon.organizer?.username || 'O'}
+                  size="xs"
+                />
+                <span className="text-sm text-foreground-muted truncate">
+                  {hackathon.organizer?.full_name || hackathon.organizer?.username}
+                </span>
+              </div>
+            )}
 
             {/* Date */}
             <div className="flex items-center gap-1.5 text-sm text-foreground-muted mb-2">

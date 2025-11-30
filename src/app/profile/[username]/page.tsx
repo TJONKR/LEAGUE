@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HackathonCard } from "@/components/hackathons/hackathon-card";
 import { ProjectCard } from "@/components/projects/project-card";
+import { ProfileHonors } from "@/components/honors";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/utils";
 import {
@@ -23,7 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import type { Profile } from "@/types/database";
+import type { Profile, PeerHonor } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -95,6 +96,18 @@ export default async function ProfilePage({ params }: PageProps) {
     `)
     .eq("user_id", profile.id)
     .order("created_at", { ascending: false });
+
+  // Get peer honors received
+  const { data: honorsReceived } = await supabase
+    .from("peer_honors")
+    .select(`
+      *,
+      project:projects(title, slug)
+    `)
+    .eq("receiver_id", profile.id)
+    .order("created_at", { ascending: false }) as { 
+      data: (PeerHonor & { project: { title: string; slug: string } })[] | null 
+    };
 
   // Calculate stats
   const hackathonsHosted = participations?.filter(
@@ -251,6 +264,11 @@ export default async function ProfilePage({ params }: PageProps) {
                 )}
               </CardContent>
             </Card>
+
+            {/* Peer Honors */}
+            {honorsReceived && honorsReceived.length > 0 && (
+              <ProfileHonors honors={honorsReceived} />
+            )}
 
             {/* Achievements */}
             {achievements && achievements.length > 0 && (

@@ -3,8 +3,9 @@ import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { AppShell } from "@/components/layout/app-shell";
+import { ChampionThrone, RunnerUpPedestal } from "@/components/leaderboard";
 import Link from "next/link";
-import { Crown, Flame, TrendingUp, Zap, Trophy, Medal, Star } from "lucide-react";
+import { Flame, TrendingUp, Zap, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -49,121 +50,37 @@ export default async function LeaderboardPage() {
         </Container>
       </section>
 
-      {/* Podium Section */}
+      {/* Podium Section - The Throne */}
       {topThree.length > 0 && (
-        <section className="relative pb-8">
-          <Container>
-            <div className="relative">
-              {/* Glow effect behind podium */}
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#FFD700]/5 via-transparent to-transparent" />
-              
-              <div className="relative flex items-end justify-center gap-3 sm:gap-6 pt-8">
-                {/* 2nd Place */}
-                <div className="flex-1 max-w-[140px] sm:max-w-[180px]">
-                  {topThree[1] ? (
-                    <Link href={"/profile/" + topThree[1].username} className="block group">
-                      <div className="flex flex-col items-center">
-                        {/* Avatar with ring */}
-                        <div className="relative mb-3">
-                          <div className="absolute -inset-1 bg-gradient-to-b from-[#C0C0C0] to-[#808080] rounded-full opacity-50 group-hover:opacity-100 transition-opacity blur-sm" />
-                          <Avatar
-                            src={topThree[1].altered_avatar_url || topThree[1].avatar_url || topThree[1].fetched_url}
-                            fallback={topThree[1].full_name || topThree[1].username}
-                            size="xl"
-                            className="relative ring-3 ring-[#C0C0C0] w-16 h-16 sm:w-20 sm:h-20"
-                          />
-                        </div>
-                        <span className="font-semibold text-[#FAFAFA] text-sm sm:text-base mb-1 truncate max-w-full">
-                          {topThree[1].full_name || topThree[1].username}
-                        </span>
-                        <span className="text-xs text-[#737373] mb-3">@{topThree[1].username}</span>
-                        
-                        {/* Podium */}
-                        <div className="w-full">
-                          <div className="h-24 sm:h-32 bg-gradient-to-b from-[#404040] via-[#2A2A2A] to-[#1A1A1A] rounded-t-2xl flex flex-col items-center justify-center border-t border-x border-[#505050] relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#C0C0C0]/10 to-transparent" />
-                            <Medal className="w-6 h-6 sm:w-8 sm:h-8 text-[#C0C0C0] mb-1" />
-                            <span className="text-3xl sm:text-4xl font-black text-[#C0C0C0]">2</span>
-                            <span className="text-xs text-[#737373] font-mono mt-1">{topThree[1].total_score ?? 0} pts</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ) : <div className="h-32" />}
-                </div>
+        <section className="relative pb-16 pt-8 overflow-visible">
+          {/* Background cosmic effects */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-b from-[#FFD700]/8 via-[#E53935]/8 to-transparent blur-3xl" />
+            <div className="absolute bottom-0 left-1/4 w-96 h-64 bg-[#E53935]/15 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-64 bg-[#FF7043]/15 rounded-full blur-3xl" />
+          </div>
+          
+          <Container className="overflow-visible">
+            <div className="relative flex items-end justify-center gap-4 sm:gap-8 pt-16 overflow-visible">
+              {/* 2nd Place */}
+              <div className="flex-shrink-0">
+                {topThree[1] ? (
+                  <RunnerUpPedestal profile={topThree[1]} position={2} />
+                ) : <div className="w-36 h-48" />}
+              </div>
 
-                {/* 1st Place */}
-                <div className="flex-1 max-w-[160px] sm:max-w-[200px] -mt-8">
-                  {topThree[0] && (
-                    <Link href={"/profile/" + topThree[0].username} className="block group">
-                      <div className="flex flex-col items-center">
-                        {/* Crown */}
-                        <div className="mb-2 relative">
-                          <Crown className="w-10 h-10 sm:w-12 sm:h-12 text-[#FFD700] drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]" />
-                        </div>
-                        
-                        {/* Avatar with golden ring */}
-                        <div className="relative mb-3">
-                          <div className="absolute -inset-2 bg-gradient-to-b from-[#FFD700] to-[#FFA500] rounded-full opacity-40 group-hover:opacity-70 transition-opacity blur-md animate-pulse" />
-                          <Avatar
-                            src={topThree[0].altered_avatar_url || topThree[0].avatar_url || topThree[0].fetched_url}
-                            fallback={topThree[0].full_name || topThree[0].username}
-                            size="xl"
-                            className="relative ring-4 ring-[#FFD700] w-20 h-20 sm:w-24 sm:h-24"
-                          />
-                        </div>
-                        <span className="font-bold text-[#FAFAFA] text-base sm:text-lg mb-1 truncate max-w-full">
-                          {topThree[0].full_name || topThree[0].username}
-                        </span>
-                        <span className="text-xs text-[#737373] mb-3">@{topThree[0].username}</span>
-                        
-                        {/* Podium */}
-                        <div className="w-full">
-                          <div className="h-36 sm:h-44 bg-gradient-to-b from-[#4A4A4A] via-[#333333] to-[#1A1A1A] rounded-t-2xl flex flex-col items-center justify-center border-t border-x border-[#5A5A5A] relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/15 to-transparent" />
-                            <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-[#FFD700] mb-1" />
-                            <span className="text-4xl sm:text-5xl font-black text-[#FFD700]">1</span>
-                            <span className="text-sm text-[#E53935] font-mono font-bold mt-1">{topThree[0].total_score ?? 0} pts</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  )}
-                </div>
+              {/* 1st Place - The Ascended Champion */}
+              <div className="flex-shrink-0 -mt-16">
+                {topThree[0] && (
+                  <ChampionThrone champion={topThree[0]} />
+                )}
+              </div>
 
-                {/* 3rd Place */}
-                <div className="flex-1 max-w-[140px] sm:max-w-[180px]">
-                  {topThree[2] ? (
-                    <Link href={"/profile/" + topThree[2].username} className="block group">
-                      <div className="flex flex-col items-center">
-                        {/* Avatar with ring */}
-                        <div className="relative mb-3">
-                          <div className="absolute -inset-1 bg-gradient-to-b from-[#CD7F32] to-[#8B4513] rounded-full opacity-50 group-hover:opacity-100 transition-opacity blur-sm" />
-                          <Avatar
-                            src={topThree[2].altered_avatar_url || topThree[2].avatar_url || topThree[2].fetched_url}
-                            fallback={topThree[2].full_name || topThree[2].username}
-                            size="lg"
-                            className="relative ring-3 ring-[#CD7F32] w-14 h-14 sm:w-16 sm:h-16"
-                          />
-                        </div>
-                        <span className="font-semibold text-[#FAFAFA] text-sm sm:text-base mb-1 truncate max-w-full">
-                          {topThree[2].full_name || topThree[2].username}
-                        </span>
-                        <span className="text-xs text-[#737373] mb-3">@{topThree[2].username}</span>
-                        
-                        {/* Podium */}
-                        <div className="w-full">
-                          <div className="h-20 sm:h-24 bg-gradient-to-b from-[#3A3A3A] via-[#282828] to-[#1A1A1A] rounded-t-2xl flex flex-col items-center justify-center border-t border-x border-[#4A4A4A] relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#CD7F32]/10 to-transparent" />
-                            <Star className="w-5 h-5 sm:w-6 sm:h-6 text-[#CD7F32] mb-1" />
-                            <span className="text-2xl sm:text-3xl font-black text-[#CD7F32]">3</span>
-                            <span className="text-xs text-[#737373] font-mono mt-1">{topThree[2].total_score ?? 0} pts</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ) : <div className="h-24" />}
-                </div>
+              {/* 3rd Place */}
+              <div className="flex-shrink-0">
+                {topThree[2] ? (
+                  <RunnerUpPedestal profile={topThree[2]} position={3} />
+                ) : <div className="w-36 h-40" />}
               </div>
             </div>
           </Container>

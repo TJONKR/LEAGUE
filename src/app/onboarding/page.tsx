@@ -123,6 +123,38 @@ export default function OnboardingPage() {
     setIsClaiming(true);
     setError(null);
 
+    // First, check if there's already a profile that can be claimed
+    // This handles the case where a profile exists with id = auth user id but auth_id is null
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("*")
+      .or(`id.eq.${user.id},auth_id.eq.${user.id}`)
+      .maybeSingle();
+
+    if (existingProfile) {
+      // Profile exists - claim it instead of creating new
+      if (!existingProfile.auth_id) {
+        const { error: claimError } = await supabase
+          .from("profiles")
+          .update({ 
+            auth_id: user.id,
+            full_name: fullName.trim() || existingProfile.full_name,
+            fetched_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || existingProfile.fetched_url,
+          })
+          .eq("id", existingProfile.id);
+
+        if (claimError) {
+          setError(claimError.message || "Failed to claim existing profile");
+          setIsClaiming(false);
+          return;
+        }
+      }
+      await refreshProfile();
+      router.replace("/settings");
+      return;
+    }
+
+    // No existing profile found - create a new one
     const username = fullName.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "") + "_" + Date.now().toString(36).slice(-4);
 
     const { error: createError } = await supabase
