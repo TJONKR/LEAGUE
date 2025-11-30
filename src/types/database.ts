@@ -517,3 +517,13 @@ export type BountyWithDetails = Bounty & {
     submitter: Profile;
   })[];
 };
+
+export type PeerHonor = Database["public"]["Tables"]["peer_honors"]["Row"];
+
+export type Stack = Database["public"]["Tables"]["stacks"]["Row"];
+
+export type StackWithDetails = Stack & {
+  profile: Profile;
+};
+
+export type HonorType = Database["public"]["Enums"]["honor_type"];
