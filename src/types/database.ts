@@ -385,3 +385,6 @@ export type ProfileWithStats = Profile & {
   projects_count: number;
   achievements: Achievement[];
 };
+
+// Bounty types (until bounties table is added to database)
+export type BountyStatus = "open" | "in_review" | "awarded" | "completed" | "cancelled";
