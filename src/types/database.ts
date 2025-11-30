@@ -505,6 +505,53 @@ export type Database = {
           },
         ]
       }
+      stacks: {
+        Row: {
+          id: string
+          user_id: string
+          github_username: string
+          top_repos: Json
+          languages: Json
+          total_repos: number
+          total_stars: number
+          total_forks: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          github_username: string
+          top_repos?: Json
+          languages?: Json
+          total_repos?: number
+          total_stars?: number
+          total_forks?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          github_username?: string
+          top_repos?: Json
+          languages?: Json
+          total_repos?: number
+          total_stars?: number
+          total_forks?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stacks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -545,10 +592,40 @@ export type Achievement = Database["public"]["Tables"]["achievements"]["Row"];
 export type Bounty = Database["public"]["Tables"]["bounties"]["Row"];
 export type BountySubmission = Database["public"]["Tables"]["bounty_submissions"]["Row"];
 export type PeerHonor = Database["public"]["Tables"]["peer_honors"]["Row"];
+export type Stack = Database["public"]["Tables"]["stacks"]["Row"];
 
 // Enum types
 export type BountyStatus = Database["public"]["Enums"]["bounty_status"];
 export type HonorType = Database["public"]["Enums"]["honor_type"];
+
+// GitHub repo structure for stacks
+export interface GitHubRepo {
+  name: string;
+  full_name: string;
+  description: string | null;
+  url: string;
+  stars: number;
+  forks: number;
+  primary_language: string | null;
+  languages: Record<string, number>; // language -> percentage
+}
+
+// Language stats structure
+export type LanguageStats = Record<string, number>; // language -> percentage
+
+// Stack with typed JSON fields
+export interface StackWithDetails {
+  id: string;
+  user_id: string;
+  github_username: string;
+  top_repos: GitHubRepo[];
+  languages: LanguageStats;
+  total_repos: number;
+  total_stars: number;
+  total_forks: number;
+  created_at: string | null;
+  updated_at: string | null;
+}
 
 // Extended types with relations
 export type HackathonWithOrganizer = Hackathon & {
@@ -572,6 +649,10 @@ export type ProfileWithStats = Profile & {
   hackathons_count: number;
   projects_count: number;
   achievements: Achievement[];
+};
+
+export type ProfileWithStack = Profile & {
+  stack: StackWithDetails | null;
 };
 
 export type BountyWithPoster = Bounty & {
