@@ -437,6 +437,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          bounty_id: string | null
           cover_image: string | null
           created_at: string | null
           creator_id: string
@@ -451,6 +452,7 @@ export type Database = {
           vote_count: number | null
         }
         Insert: {
+          bounty_id?: string | null
           cover_image?: string | null
           created_at?: string | null
           creator_id: string
@@ -465,6 +467,7 @@ export type Database = {
           vote_count?: number | null
         }
         Update: {
+          bounty_id?: string | null
           cover_image?: string | null
           created_at?: string | null
           creator_id?: string
@@ -479,6 +482,13 @@ export type Database = {
           vote_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_bounty_id_fkey"
+            columns: ["bounty_id"]
+            isOneToOne: false
+            referencedRelation: "bounties"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_creator_id_fkey"
             columns: ["creator_id"]
@@ -554,6 +564,7 @@ export type HackathonWithDetails = Hackathon & {
 export type ProjectWithDetails = Project & {
   creator: Profile;
   hackathon: Hackathon | null;
+  bounty: Bounty | null;
   members: (ProjectMember & { profile: Profile })[];
 };
 
