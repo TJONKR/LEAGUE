@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User, AuthChangeEvent } from "@supabase/supabase-js";
 import type { Profile } from "@/types/database";
@@ -28,7 +28,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
-  const supabase = createClient();
+  
+  // Use singleton client - memoized to prevent recreation
+  const supabase = useMemo(() => createClient(), []);
 
   const fetchProfile = useCallback(async (authUser: User) => {
     try {
@@ -64,17 +66,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function initAuth() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Use getUser() instead of getSession() - it validates with the server
+        // This is more secure and ensures the token is valid
+        const { data: { user: authUser }, error } = await supabase.auth.getUser();
         
         if (error) {
-          console.error("Error getting session:", error);
+          // AuthSessionMissingError is expected when not logged in
+          if (error.name !== "AuthSessionMissingError") {
+            console.error("Error getting user:", error);
+          }
         }
 
         if (!mounted) return;
 
-        if (session?.user) {
-          setUser(session.user);
-          await fetchProfile(session.user);
+        if (authUser) {
+          setUser(authUser);
+          await fetchProfile(authUser);
         } else {
           setUser(null);
           setProfile(null);
@@ -113,11 +120,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await fetchProfile(session.user);
         }
       }
+      
+      // Handle initial session load
+      if (event === "INITIAL_SESSION" && session?.user) {
+        setUser(session.user);
+        await fetchProfile(session.user);
+      }
     });
+
+    // Set up periodic session refresh (every 4 minutes)
+    // This helps keep the session alive before the token expires
+    const refreshInterval = setInterval(async () => {
+      if (!mounted) return;
+      const { data: { user: refreshedUser } } = await supabase.auth.getUser();
+      if (refreshedUser && mounted) {
+        setUser(refreshedUser);
+      }
+    }, 4 * 60 * 1000); // 4 minutes
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      clearInterval(refreshInterval);
     };
   }, [fetchProfile, supabase.auth]);
 
