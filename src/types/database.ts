@@ -54,6 +54,108 @@ export type Database = {
           },
         ]
       }
+      bounties: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          description: string | null
+          reward_amount: number
+          deadline: string
+          status: Database["public"]["Enums"]["bounty_status"]
+          tags: string[] | null
+          cover_image: string | null
+          poster_id: string
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          description?: string | null
+          reward_amount: number
+          deadline: string
+          status?: Database["public"]["Enums"]["bounty_status"]
+          tags?: string[] | null
+          cover_image?: string | null
+          poster_id: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          description?: string | null
+          reward_amount?: number
+          deadline?: string
+          status?: Database["public"]["Enums"]["bounty_status"]
+          tags?: string[] | null
+          cover_image?: string | null
+          poster_id?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounties_poster_id_fkey"
+            columns: ["poster_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bounty_submissions: {
+        Row: {
+          id: string
+          bounty_id: string
+          project_id: string
+          submitted_by: string
+          submitted_at: string | null
+          is_winner: boolean
+        }
+        Insert: {
+          id?: string
+          bounty_id: string
+          project_id: string
+          submitted_by: string
+          submitted_at?: string | null
+          is_winner?: boolean
+        }
+        Update: {
+          id?: string
+          bounty_id?: string
+          project_id?: string
+          submitted_by?: string
+          submitted_at?: string | null
+          is_winner?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounty_submissions_bounty_id_fkey"
+            columns: ["bounty_id"]
+            isOneToOne: false
+            referencedRelation: "bounties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bounty_submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bounty_submissions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hackathon_participants: {
         Row: {
           hackathon_id: string
@@ -154,9 +256,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          altered_avatar_url: string | null
+          auth_id: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          fetched_url: string | null
           full_name: string | null
           github_username: string | null
           id: string
@@ -168,9 +273,12 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          altered_avatar_url?: string | null
+          auth_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          fetched_url?: string | null
           full_name?: string | null
           github_username?: string | null
           id: string
@@ -182,9 +290,12 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          altered_avatar_url?: string | null
+          auth_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          fetched_url?: string | null
           full_name?: string | null
           github_username?: string | null
           id?: string
@@ -346,6 +457,7 @@ export type Database = {
         | "first_place"
         | "second_place"
         | "third_place"
+      bounty_status: "open" | "in_review" | "awarded" | "completed" | "cancelled"
       participant_role: "participant" | "organizer"
     }
     CompositeTypes: {
@@ -362,6 +474,11 @@ export type Project = Database["public"]["Tables"]["projects"]["Row"];
 export type ProjectMember = Database["public"]["Tables"]["project_members"]["Row"];
 export type ProjectVote = Database["public"]["Tables"]["project_votes"]["Row"];
 export type Achievement = Database["public"]["Tables"]["achievements"]["Row"];
+export type Bounty = Database["public"]["Tables"]["bounties"]["Row"];
+export type BountySubmission = Database["public"]["Tables"]["bounty_submissions"]["Row"];
+
+// Enum types
+export type BountyStatus = Database["public"]["Enums"]["bounty_status"];
 
 // Extended types with relations
 export type HackathonWithOrganizer = Hackathon & {
@@ -386,5 +503,14 @@ export type ProfileWithStats = Profile & {
   achievements: Achievement[];
 };
 
-// Bounty types (until bounties table is added to database)
-export type BountyStatus = "open" | "in_review" | "awarded" | "completed" | "cancelled";
+export type BountyWithPoster = Bounty & {
+  poster: Profile;
+};
+
+export type BountyWithDetails = Bounty & {
+  poster: Profile;
+  submissions: (BountySubmission & { 
+    project: Project; 
+    submitter: Profile;
+  })[];
+};
