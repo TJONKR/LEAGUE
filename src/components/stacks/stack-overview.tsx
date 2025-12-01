@@ -38,7 +38,7 @@ export function StackOverview({ stack, className = "" }: StackOverviewProps) {
           <div className="flex flex-col items-center">
             <FolderGit2 className="w-5 h-5 text-[#737373] mb-2" />
             <span className="text-2xl font-bold text-[#FAFAFA]">
-              {stack.total_repos}
+              {stack.total_repos ?? 0}
             </span>
             <span className="text-xs text-[#737373]">Repos</span>
           </div>
@@ -47,7 +47,7 @@ export function StackOverview({ stack, className = "" }: StackOverviewProps) {
           <div className="flex flex-col items-center">
             <Star className="w-5 h-5 text-[#F59E0B] mb-2" />
             <span className="text-2xl font-bold text-[#FAFAFA]">
-              {formatNumber(stack.total_stars)}
+              {formatNumber(stack.total_stars ?? 0)}
             </span>
             <span className="text-xs text-[#737373]">Stars</span>
           </div>
@@ -56,7 +56,7 @@ export function StackOverview({ stack, className = "" }: StackOverviewProps) {
           <div className="flex flex-col items-center">
             <GitFork className="w-5 h-5 text-[#737373] mb-2" />
             <span className="text-2xl font-bold text-[#FAFAFA]">
-              {formatNumber(stack.total_forks)}
+              {formatNumber(stack.total_forks ?? 0)}
             </span>
             <span className="text-xs text-[#737373]">Forks</span>
           </div>

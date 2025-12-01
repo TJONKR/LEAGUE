@@ -311,58 +311,6 @@ export type Database = {
           },
         ]
       },
-      peer_honors: {
-        Row: {
-          created_at: string | null
-          giver_id: string
-          honor_type: Database["public"]["Enums"]["honor_type"]
-          id: string
-          points: number
-          project_id: string
-          receiver_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          giver_id: string
-          honor_type: Database["public"]["Enums"]["honor_type"]
-          id?: string
-          points?: number
-          project_id: string
-          receiver_id: string
-        }
-        Update: {
-          created_at?: string | null
-          giver_id?: string
-          honor_type?: Database["public"]["Enums"]["honor_type"]
-          id?: string
-          points?: number
-          project_id?: string
-          receiver_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "peer_honors_giver_id_fkey"
-            columns: ["giver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "peer_honors_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "peer_honors_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      },
       profiles: {
         Row: {
           altered_avatar_url: string
@@ -701,3 +649,17 @@ export type StackWithDetails = Stack & {
 };
 
 export type HonorType = Database["public"]["Enums"]["honor_type"];
+
+// Language statistics for stack display (language name -> percentage)
+export type LanguageStats = Record<string, number>;
+
+// GitHub repository data from stack
+export interface GitHubRepo {
+  full_name: string;
+  name: string;
+  url: string;
+  description?: string | null;
+  languages?: Record<string, number>;
+  stars: number;
+  forks: number;
+}
