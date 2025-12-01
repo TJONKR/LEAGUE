@@ -91,7 +91,7 @@ export default function SettingsPage() {
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ avatar_url: publicUrl })
-        .eq("id", user.id);
+        .eq("auth_id", user.id);
 
       if (updateError) throw updateError;
 
@@ -115,7 +115,7 @@ export default function SettingsPage() {
     const { error } = await supabase
       .from("profiles")
       .update(formData)
-      .eq("id", user.id);
+      .eq("auth_id", user.id);
 
     if (error) {
       setMessage({ type: "error", text: error.message });

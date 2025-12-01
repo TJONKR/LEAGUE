@@ -1,6 +1,7 @@
-we need to fix 'create' flow
-first choose: create project, request project, hackathon
-then open the UI required for this
+✅ DONE: Fixed 'create' flow
+- Added dropdown menu to Create button in header
+- Options: Project, Bounty (request project), Hackathon
+- Each option navigates to the appropriate form
 
 
 

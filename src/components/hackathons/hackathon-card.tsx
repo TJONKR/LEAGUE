@@ -128,3 +128,4 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
   );
 }
 
+
