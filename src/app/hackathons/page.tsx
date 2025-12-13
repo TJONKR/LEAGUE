@@ -45,8 +45,8 @@ export default async function HackathonsPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h1 className="text-3xl font-bold text-[#FAFAFA]">Hackathons</h1>
-              <p className="text-[#737373] mt-2">Discover events and start building</p>
+              <h1 className="text-3xl font-bold text-[#F5F7FA]">Hackathons</h1>
+              <p className="text-[#64748B] mt-2">Discover events and start building</p>
             </div>
             <Link href="/hackathons/new">
               <Button className="rounded-full">Create Hackathon</Button>
@@ -55,10 +55,10 @@ export default async function HackathonsPage() {
 
           {/* Tabs */}
           <div className="flex gap-2 mb-8">
-            <button className="px-4 py-2 rounded-full text-sm font-medium bg-[#1A1A1A] text-[#FAFAFA]">
+            <button className="px-4 py-2 rounded-full text-sm font-medium bg-[#003399]/20 text-[#FFCC00] border border-[#003399]/50">
               Upcoming
             </button>
-            <button className="px-4 py-2 rounded-full text-sm font-medium text-[#737373] hover:text-[#FAFAFA] hover:bg-[#1A1A1A]/50 transition-all">
+            <button className="px-4 py-2 rounded-full text-sm font-medium text-[#64748B] hover:text-[#F5F7FA] hover:bg-[#132440] transition-all">
               Past
             </button>
           </div>
@@ -81,7 +81,7 @@ export default async function HackathonsPage() {
                   <Link key={hackathon.id} href={"/hackathons/" + hackathon.slug}>
                     <Card hover className="h-full overflow-hidden">
                       {/* Cover Image Header */}
-                      <div className="h-32 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
+                      <div className="h-32 relative bg-gradient-to-br from-[#243B5C] to-[#132440]">
                         {isValidUrl(hackathon.cover_image) ? (
                           <Image
                             src={hackathon.cover_image}
@@ -90,10 +90,10 @@ export default async function HackathonsPage() {
                             className="object-cover"
                           />
                         ) : (
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#E53935]/20 to-[#FF7043]/10" />
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#003399]/30 to-[#FFCC00]/10" />
                         )}
                         {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#132440] via-transparent to-transparent" />
                         
                         {isOngoing && (
                           <Badge variant="success" size="sm" className="absolute top-3 right-3">
@@ -102,8 +102,8 @@ export default async function HackathonsPage() {
                         )}
                       </div>
                       <div className="p-5">
-                        <h3 className="font-semibold text-[#FAFAFA] text-lg mb-2">{hackathon.title}</h3>
-                        <div className="space-y-2 text-sm text-[#737373] mb-4">
+                        <h3 className="font-semibold text-[#F5F7FA] text-lg mb-2">{hackathon.title}</h3>
+                        <div className="space-y-2 text-sm text-[#64748B] mb-4">
                           <div className="flex items-center gap-2">
                             <span>📅</span>
                             <span>
@@ -119,9 +119,9 @@ export default async function HackathonsPage() {
                           </div>
                         </div>
                         {participants.length > 0 && (
-                          <div className="flex items-center gap-2 pt-4 border-t border-[#1F1F1F]">
+                          <div className="flex items-center gap-2 pt-4 border-t border-[#243B5C]">
                             <AvatarGroup avatars={avatars} size="xs" max={4} />
-                            <span className="text-xs text-[#737373]">{participants.length} joined</span>
+                            <span className="text-xs text-[#64748B]">{participants.length} joined</span>
                           </div>
                         )}
                       </div>
@@ -133,8 +133,8 @@ export default async function HackathonsPage() {
           ) : (
             <Card className="p-16 text-center">
               <div className="text-5xl mb-4">🎯</div>
-              <p className="text-[#FAFAFA] font-medium mb-2">No upcoming hackathons</p>
-              <p className="text-sm text-[#737373] mb-6">Be the first to create one!</p>
+              <p className="text-[#F5F7FA] font-medium mb-2">No upcoming hackathons</p>
+              <p className="text-sm text-[#64748B] mb-6">Be the first to create one!</p>
               <Link href="/hackathons/new">
                 <Button variant="outline" className="rounded-full">Create Hackathon</Button>
               </Link>
@@ -144,7 +144,7 @@ export default async function HackathonsPage() {
           {/* Past Events */}
           {past && past.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-xl font-semibold text-[#FAFAFA] mb-6">Past Events</h2>
+              <h2 className="text-xl font-semibold text-[#F5F7FA] mb-6">Past Events</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {past.map((hackathon) => {
                   const participants = hackathon.hackathon_participants || [];
@@ -153,7 +153,7 @@ export default async function HackathonsPage() {
                     <Link key={hackathon.id} href={"/hackathons/" + hackathon.slug}>
                       <Card hover className="h-full overflow-hidden opacity-60 hover:opacity-100 transition-opacity">
                         {/* Cover Image Header for Past */}
-                        <div className="h-24 relative bg-gradient-to-br from-[#262626] to-[#1C1C1C]">
+                        <div className="h-24 relative bg-gradient-to-br from-[#243B5C] to-[#132440]">
                           {isValidUrl(hackathon.cover_image) ? (
                             <Image
                               src={hackathon.cover_image}
@@ -162,13 +162,13 @@ export default async function HackathonsPage() {
                               className="object-cover grayscale"
                             />
                           ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#E53935]/10 to-[#FF7043]/5" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#003399]/15 to-[#FFCC00]/5" />
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#132440] via-transparent to-transparent" />
                         </div>
                         <div className="p-5">
-                          <h3 className="font-semibold text-[#FAFAFA] mb-2">{hackathon.title}</h3>
-                          <div className="flex items-center gap-2 text-sm text-[#737373]">
+                          <h3 className="font-semibold text-[#F5F7FA] mb-2">{hackathon.title}</h3>
+                          <div className="flex items-center gap-2 text-sm text-[#64748B]">
                             <span>📅</span>
                             <span>
                               {new Date(hackathon.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}

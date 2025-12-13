@@ -16,13 +16,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg",
+          "inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-lg",
           {
-            "bg-[#E53935] text-white hover:bg-[#EF5350]": variant === "default" || variant === "primary",
-            "bg-transparent text-[#FAFAFA] border border-[#262626] hover:bg-[#161616] hover:border-[#363636]": variant === "outline",
-            "bg-transparent text-[#A1A1A1] hover:text-[#FAFAFA] hover:bg-[#161616]": variant === "ghost",
-            "bg-[#161616] text-[#FAFAFA] hover:bg-[#1C1C1C]": variant === "secondary",
-            "bg-[#E53935]/10 text-[#E53935] hover:bg-[#E53935]/20": variant === "danger",
+            "bg-[#FFCC00] text-[#002266] hover:bg-[#FFD633] shadow-[0_0_20px_rgba(255,204,0,0.3)] hover:shadow-[0_0_25px_rgba(255,204,0,0.4)]": variant === "default" || variant === "primary",
+            "bg-transparent text-[#F5F7FA] border border-[#243B5C] hover:bg-[#132440] hover:border-[#FFCC00]/50": variant === "outline",
+            "bg-transparent text-[#94A3B8] hover:text-[#F5F7FA] hover:bg-[#132440]": variant === "ghost",
+            "bg-[#132440] text-[#F5F7FA] hover:bg-[#1A2D4D] border border-[#243B5C]": variant === "secondary",
+            "bg-[#EF4444]/10 text-[#EF4444] hover:bg-[#EF4444]/20": variant === "danger",
             "px-3 py-1.5 text-sm": size === "sm",
             "px-4 py-2 text-sm": size === "md",
             "px-6 py-3 text-base": size === "lg",

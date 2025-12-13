@@ -54,21 +54,19 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 bg-[#0A0A0A]">
+    <div className="min-h-screen flex items-center justify-center py-12 bg-[#0A1628]">
       <Container>
         <div className="w-full max-w-sm mx-auto">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-[#E53935] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">L</span>
-              </div>
+              <span className="text-3xl font-black tracking-tight text-[#FFCC00]">MEGAS</span>
             </Link>
-            <h1 className="text-2xl font-bold text-[#FAFAFA]">Welcome back</h1>
-            <p className="text-[#737373] mt-2">Sign in to your account</p>
+            <h1 className="text-2xl font-bold text-[#F5F7FA]">Welcome back</h1>
+            <p className="text-[#64748B] mt-2">Sign in to your account</p>
           </div>
 
           {message && (
-            <div className="bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E] text-sm p-3 rounded-lg mb-6 text-center">
+            <div className="bg-[#10B981]/10 border border-[#10B981]/20 text-[#10B981] text-sm p-3 rounded-lg mb-6 text-center">
               {message}
             </div>
           )}
@@ -104,10 +102,10 @@ function LoginForm() {
 
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[#262626]" />
+                <div className="w-full border-t border-[#243B5C]" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-2 bg-[#161616] text-[#737373]">or continue with email</span>
+                <span className="px-2 bg-[#132440] text-[#64748B]">or continue with email</span>
               </div>
             </div>
 
@@ -130,7 +128,7 @@ function LoginForm() {
               />
 
               {error && (
-                <p className="text-sm text-[#E53935] text-center">{error}</p>
+                <p className="text-sm text-[#EF4444] text-center">{error}</p>
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading !== null} isLoading={isLoading === "email"}>
@@ -139,9 +137,9 @@ function LoginForm() {
             </form>
           </Card>
 
-          <p className="text-sm text-center mt-6 text-[#737373]">
+          <p className="text-sm text-center mt-6 text-[#64748B]">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-[#E53935] hover:underline">
+            <Link href="/signup" className="text-[#FFCC00] hover:underline">
               Sign up
             </Link>
           </p>
@@ -154,8 +152,8 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
-        <div className="text-[#737373]">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
+        <div className="text-[#64748B]">Loading...</div>
       </div>
     }>
       <LoginForm />
